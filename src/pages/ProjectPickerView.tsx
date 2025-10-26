@@ -1,0 +1,128 @@
+import React from 'react'
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Button,
+  TextField,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  ListItemButton,
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
+import { useNavigate } from 'react-router-dom'
+
+export default function ProjectPickerView() {
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const projects = useAppSelector((s) => s.projects.projects)
+  const currentId = useAppSelector((s) => s.projects.currentProjectId)
+  const [openNew, setOpenNew] = React.useState(false)
+  const [name, setName] = React.useState('')
+
+  const handleCreate = () => {
+    if (!name.trim()) return
+    dispatch(createProject({ name: name.trim() }))
+    setName('')
+    setOpenNew(false)
+
+    // Navigate to last project after a tiny delay (works for skeleton)
+    setTimeout(() => {
+      const last = projects[projects.length - 1] // only this is used
+      if (last) navigate(`/project/${last.id}`)
+    }, 50)
+  }
+
+  const handleSelect = (id: string) => {
+    dispatch(selectProject(id))
+    navigate(`/project/${id}`)
+  }
+
+  const handleDelete = (id: string) => {
+    if (!confirm('Delete this project?')) return
+    dispatch(deleteProject(id))
+  }
+
+  return (
+    <Box>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h5">Projects</Typography>
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="contained"
+            startIcon={<FileUploadIcon />}
+            onClick={() => alert('Import not implemented in skeleton')}
+          >
+            Import
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<FileDownloadIcon />}
+            onClick={() => alert('Export not implemented in skeleton')}
+          >
+            Export
+          </Button>
+          <Button variant="contained" onClick={() => setOpenNew(true)}>
+            New Project
+          </Button>
+        </Stack>
+      </Stack>
+
+      <List>
+        {projects.length === 0 && (
+          <Typography color="text.secondary">No projects yet — create one!</Typography>
+        )}
+        {projects.map((p) => (
+          <ListItem
+            key={p.id}
+            secondaryAction={
+              <IconButton edge="end" onClick={() => handleDelete(p.id)} aria-label="delete">
+                <DeleteIcon />
+              </IconButton>
+            }
+          >
+            <ListItemButton selected={p.id === currentId} onClick={() => handleSelect(p.id)}>
+              <ListItemText
+                primary={p.name}
+                secondary={
+                  p.sections?.[0]
+                    ? `Section: ${p.sections[0].currentRow} / ${p.sections[0].repeatRows ?? '?'}`
+                    : `Rows: ${p.currentRow}`
+                }
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+
+      <Dialog open={openNew} onClose={() => setOpenNew(false)}>
+        <DialogTitle>New Project</DialogTitle>
+        <DialogContent>
+          <TextField
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            label="Project name"
+            fullWidth
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenNew(false)}>Cancel</Button>
+          <Button onClick={handleCreate} variant="contained">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  )
+}
