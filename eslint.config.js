@@ -33,8 +33,8 @@ export default tseslint.config(
       'prettier/prettier': [
         'error',
         {
-          singleQuote: false,
-          semi: true,
+          singleQuote: true,
+          semi: false,
           trailingComma: 'all',
           printWidth: 100,
           tabWidth: 2,

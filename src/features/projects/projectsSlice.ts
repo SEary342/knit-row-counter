@@ -1,7 +1,9 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Project, ProjectsState } from './types'
-import { loadProjectsFromStorage } from '../../utils/localStorage'
 import { v4 } from 'uuid'
+
+import { loadProjectsFromStorage } from '../../utils/localStorage'
+
+import type { Project, ProjectsState, SectionConfig } from './types'
 
 const initialState: ProjectsState = loadProjectsFromStorage() ?? {
   projects: [],
@@ -56,6 +58,35 @@ export const projectsSlice = createSlice({
     setLinked: (state, action: PayloadAction<boolean>) => {
       const project = findProject(state)
       if (project) project.linked = action.payload
+    },
+
+    addSection: (state, action: PayloadAction<{ section: Partial<SectionConfig> }>) => {
+      const project = findProject(state)
+      if (!project) return
+      const section: SectionConfig = {
+        id: v4(),
+        name: action.payload.section.name ?? '',
+        repeatRows: action.payload.section.repeatRows ?? 0,
+        currentRow: 0,
+        repeatCount: 0,
+      }
+      if (!section) return
+
+      project.sections.push(section)
+      project.lastModified = Date.now()
+    },
+
+    updateSection: (
+      state,
+      action: PayloadAction<{ sectionId: string; updates: Partial<SectionConfig> }>,
+    ) => {
+      const project = findProject(state)
+      if (!project) return
+      const section = project.sections.find((s) => s.id === action.payload.sectionId)
+      if (!section) return
+
+      Object.assign(section, action.payload.updates)
+      project.lastModified = Date.now()
     },
 
     incrementRow: (state) => {
@@ -128,6 +159,8 @@ export const {
   updateNotes,
   updatePatternUrl,
   importProjects,
+  updateSection,
+  addSection,
 } = projectsSlice.actions
 
 export default projectsSlice.reducer

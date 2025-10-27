@@ -1,4 +1,11 @@
-import { Box, IconButton, Typography, CircularProgress, Stack } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Typography,
+  CircularProgress,
+  Stack,
+  type CircularProgressProps,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 
@@ -11,6 +18,7 @@ interface Props {
   size?: number
   showFraction?: boolean
   smallNote?: string
+  color?: CircularProgressProps['color']
 }
 
 export default function CounterCircle({
@@ -22,12 +30,19 @@ export default function CounterCircle({
   size = 180,
   showFraction = true,
   smallNote,
+  color,
 }: Props) {
   const percent = max && max > 0 ? Math.min(100, Math.round((value / max) * 100)) : null
 
   return (
     <Box sx={{ width: size, height: size, position: 'relative' }}>
-      <CircularProgress variant="determinate" value={percent ?? 100} size={size} thickness={3} />
+      <CircularProgress
+        variant="determinate"
+        value={percent ?? 100}
+        size={size}
+        thickness={3}
+        color={color}
+      />
       <Box
         sx={{
           position: 'absolute',

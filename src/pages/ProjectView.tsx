@@ -13,6 +13,7 @@ import {
   renameProject,
 } from '../features/projects/projectsSlice'
 import CounterCircle from '../components/CounterCircle'
+import SectionCard from '../components/SectionCard'
 
 export default function ProjectView() {
   const { id } = useParams<{ id: string }>()
@@ -50,21 +51,10 @@ export default function ProjectView() {
             size={220}
             showFraction={false}
             smallNote={project.totalRows ? `Goal: ${project.totalRows}` : 'No total set'}
+            color="success"
           />
         </Paper>
-
-        <Paper sx={{ p: 2, flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <CounterCircle
-            label="Section"
-            value={section?.currentRow ?? 0}
-            max={section?.repeatRows ?? null}
-            onIncrement={() => dispatch(incrementRow())}
-            onDecrement={() => dispatch(decrementRow())}
-            size={180}
-            showFraction={true}
-            smallNote={section ? `Repeats: ${section.repeatCount}` : 'No section configured'}
-          />
-        </Paper>
+        <SectionCard section={section} />
       </Stack>
 
       <Paper sx={{ p: 2, mt: 3 }}>
