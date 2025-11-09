@@ -1,3 +1,5 @@
+/// <reference types="vitest/config" />
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -31,4 +33,19 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/tests/setup.js',
+    coverage: {
+      provider: 'v8',
+      exclude: [
+        'src/tests/**',
+        'vite.config.ts',
+        'src/vite-env.d.ts',
+        'coverage/**',
+        'eslint.config.js',
+      ],
+    },
+  },
 })
