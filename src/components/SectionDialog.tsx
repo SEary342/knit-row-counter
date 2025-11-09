@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import type { SectionConfig } from '../features/projects/types'
-import { addSection, updateSection } from '../features/projects/projectsSlice'
+import { addSection, setLinked, updateSection } from '../features/projects/projectsSlice'
 
 import LinkSwitch from './LinkSwitch'
 
@@ -57,12 +57,16 @@ const SectionDialog = ({ section }: SectionDialogProps) => {
     handleClose()
   }
 
+  const handleLinkClick = () => {
+    if (section) dispatch(setLinked({ id: section.id, status: !section.linked }))
+  }
+
   const handleClose = () => setOpen(false)
 
   return (
     <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
       <Tooltip title="Link/Unlink From Global Counter">
-        <LinkSwitch />
+        <LinkSwitch onClick={handleLinkClick} checked={section?.linked ?? true} />
       </Tooltip>
       <Tooltip title="Section Settings">
         <IconButton size="small" onClick={() => setOpen(true)}>

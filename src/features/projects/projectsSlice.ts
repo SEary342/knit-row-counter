@@ -21,7 +21,6 @@ export const projectsSlice = createSlice({
       const newProject: Project = {
         id: v4(),
         name: action.payload.name,
-        linked: true,
         totalRows: null,
         currentRow: 0,
         sections: [
@@ -31,6 +30,7 @@ export const projectsSlice = createSlice({
             repeatRows: null,
             currentRow: 0,
             repeatCount: 0,
+            linked: true,
           },
         ],
         notes: '',
@@ -55,9 +55,10 @@ export const projectsSlice = createSlice({
       if (project) project.name = action.payload.name
     },
 
-    setLinked: (state, action: PayloadAction<boolean>) => {
+    setLinked: (state, action: PayloadAction<{ id: string; status: boolean }>) => {
       const project = findProject(state)
-      if (project) project.linked = action.payload
+      const section = project?.sections.find((s) => s.id === action.payload.id)
+      if (section) section.linked = action.payload.status
     },
 
     addSection: (state, action: PayloadAction<{ section: Partial<SectionConfig> }>) => {
@@ -89,35 +90,69 @@ export const projectsSlice = createSlice({
       project.lastModified = Date.now()
     },
 
-    incrementRow: (state) => {
+    incrementRow: (state, action: PayloadAction<string | undefined>) => {
+      const sectionId = action.payload
       const project = findProject(state)
       if (!project) return
-      project.currentRow += 1
 
-      const section = project.sections[0]
-      if (project.linked || section) {
-        section.currentRow += 1
-        if (section.repeatRows && section.currentRow >= section.repeatRows) {
-          section.currentRow = 0
-          section.repeatCount += 1
+      const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
+
+      if (targetSection && !targetSection.linked) {
+        // If the target section is not linked, only increment it.
+        targetSection.currentRow += 1
+        if (targetSection.repeatRows && targetSection.currentRow > targetSection.repeatRows) {
+          targetSection.currentRow = 1
+          targetSection.repeatCount += 1
+        }
+        project.lastModified = Date.now()
+        return
+      }
+
+      // Otherwise, increment the global counter and all linked sections.
+      project.currentRow += 1
+      for (const section of project.sections) {
+        if (section.linked) {
+          section.currentRow += 1
+          if (section.repeatRows && section.currentRow > section.repeatRows) {
+            section.currentRow = 1
+            section.repeatCount += 1
+          }
         }
       }
 
       project.lastModified = Date.now()
     },
 
-    decrementRow: (state) => {
+    decrementRow: (state, action: PayloadAction<string | undefined>) => {
+      const sectionId = action.payload
       const project = findProject(state)
       if (!project) return
-      if (project.currentRow > 0) project.currentRow -= 1
 
-      const section = project.sections[0]
-      if (project.linked || section) {
-        if (section.currentRow === 0 && section.repeatCount > 0 && section.repeatRows) {
+      const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
+
+      const decrementLogic = (section: SectionConfig) => {
+        if (section.currentRow <= 1 && section.repeatCount > 0 && section.repeatRows) {
           section.repeatCount -= 1
-          section.currentRow = section.repeatRows - 1
+          section.currentRow = section.repeatRows
         } else if (section.currentRow > 0) {
           section.currentRow -= 1
+        }
+      }
+
+      if (targetSection && !targetSection.linked) {
+        // If the target section is not linked, only decrement it.
+        decrementLogic(targetSection)
+        project.lastModified = Date.now()
+        return
+      }
+
+      // Otherwise, decrement the global counter and all linked sections.
+      if (project.currentRow > 0) {
+        project.currentRow -= 1
+        for (const section of project.sections) {
+          if (section.linked) {
+            decrementLogic(section)
+          }
         }
       }
 

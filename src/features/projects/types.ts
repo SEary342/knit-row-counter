@@ -4,12 +4,12 @@ export interface SectionConfig {
   repeatRows: number | null // how many rows before section resets
   currentRow: number
   repeatCount: number // how many times section reset completed
+  linked?: boolean
 }
 
 export interface Project {
   id: string
   name: string
-  linked: boolean
   totalRows: number | null // null if unknown
   currentRow: number
   sections: SectionConfig[]

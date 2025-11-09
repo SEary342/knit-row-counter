@@ -18,8 +18,8 @@ const SectionCard = ({ section }: sectionCardProps) => {
         label="Section"
         value={section?.currentRow ?? 0}
         max={section?.repeatRows ?? null}
-        onIncrement={() => dispatch(incrementRow())}
-        onDecrement={() => dispatch(decrementRow())}
+        onIncrement={() => dispatch(incrementRow(section?.id))}
+        onDecrement={() => dispatch(decrementRow(section?.id))}
         size={220}
         showFraction={true}
         smallNote={section ? `Repeats: ${section.repeatCount}` : 'No section configured'}

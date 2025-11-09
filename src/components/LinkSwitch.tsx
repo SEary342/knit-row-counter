@@ -1,22 +1,15 @@
-import React from 'react'
 import LinkIcon from '@mui/icons-material/Link'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
 import { IconButton } from '@mui/material'
 
 interface LinkSwitchProps {
-  onClick?: (checked: boolean) => void
+  onClick?: () => void
+  checked: boolean
 }
 
-const LinkSwitch = ({ onClick }: LinkSwitchProps) => {
-  const [checked, setChecked] = React.useState(false)
-
-  const handleClick = () => {
-    setChecked(!checked)
-    onClick?.(checked)
-  }
-
+const LinkSwitch = ({ onClick, checked }: LinkSwitchProps) => {
   return (
-    <IconButton onClick={handleClick}>
+    <IconButton onClick={onClick}>
       {checked ? <LinkIcon fontSize="small" color="success" /> : <LinkOffIcon fontSize="small" />}
     </IconButton>
   )

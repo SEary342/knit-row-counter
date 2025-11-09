@@ -1,15 +1,10 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Stack, Paper, IconButton, Switch, TextField, Button } from '@mui/material'
+import { Box, Typography, Stack, Paper, IconButton, TextField, Button } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
-import {
-  setLinked,
-  updateNotes,
-  updatePatternUrl,
-  renameProject,
-} from '../features/projects/projectsSlice'
+import { updateNotes, updatePatternUrl, renameProject } from '../features/projects/projectsSlice'
 import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 
@@ -47,12 +42,6 @@ const ProjectView = () => {
       <Paper sx={{ p: 2, mt: 3 }}>
         <Stack spacing={2}>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography>Linked</Typography>
-            <Switch
-              checked={project.linked}
-              onChange={(e) => dispatch(setLinked(e.target.checked))}
-              slotProps={{ input: { 'aria-label': 'link counters' } }}
-            />
             <Button
               variant="outlined"
               onClick={() => {
