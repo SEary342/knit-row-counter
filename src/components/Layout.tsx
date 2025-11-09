@@ -55,7 +55,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-          <List>
+          <List
+            sx={{
+              '& .MuiListItemIcon-root': {
+                color: 'text.primary',
+              },
+              '& .MuiListItemText-primary': {
+                color: 'text.primary',
+                fontWeight: 500,
+                letterSpacing: 0.2,
+              },
+            }}
+          >
             <ListItem component={RouterLink} to="/" onClick={() => setOpen(false)}>
               <ListItemIcon>
                 <HomeIcon />

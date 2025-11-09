@@ -60,7 +60,7 @@ const SectionDialog = ({ section }: SectionDialogProps) => {
   const handleClose = () => setOpen(false)
 
   return (
-    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2} paddingY={1}>
+    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
       <Tooltip title="Link/Unlink From Global Counter">
         <LinkSwitch />
       </Tooltip>

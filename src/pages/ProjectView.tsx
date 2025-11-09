@@ -5,17 +5,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
-  incrementRow,
-  decrementRow,
   setLinked,
   updateNotes,
   updatePatternUrl,
   renameProject,
 } from '../features/projects/projectsSlice'
-import CounterCircle from '../components/CounterCircle'
 import SectionCard from '../components/SectionCard'
+import GlobalCard from '../components/GlobalCard'
 
-export default function ProjectView() {
+const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -42,18 +40,7 @@ export default function ProjectView() {
       </Stack>
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        <Paper sx={{ p: 2, flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <CounterCircle
-            label="Global"
-            value={project.currentRow}
-            onIncrement={() => dispatch(incrementRow())}
-            onDecrement={() => dispatch(decrementRow())}
-            size={220}
-            showFraction={false}
-            smallNote={project.totalRows ? `Goal: ${project.totalRows}` : 'No total set'}
-            color="success"
-          />
-        </Paper>
+        <GlobalCard project={project} />
         <SectionCard section={section} />
       </Stack>
 
@@ -64,7 +51,7 @@ export default function ProjectView() {
             <Switch
               checked={project.linked}
               onChange={(e) => dispatch(setLinked(e.target.checked))}
-              inputProps={{ 'aria-label': 'link counters' }}
+              slotProps={{ input: { 'aria-label': 'link counters' } }}
             />
             <Button
               variant="outlined"
@@ -97,3 +84,5 @@ export default function ProjectView() {
     </Box>
   )
 }
+
+export default ProjectView
