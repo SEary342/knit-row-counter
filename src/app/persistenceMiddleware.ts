@@ -1,4 +1,5 @@
 import type { Middleware } from '@reduxjs/toolkit'
+
 import { saveProjectsToStorage } from '../utils/localStorage'
 
 export const persistenceMiddleware: Middleware = (storeAPI) => (next) => (action) => {

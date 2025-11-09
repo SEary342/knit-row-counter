@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Workbox } from 'workbox-window'
 
 export function registerSW() {
