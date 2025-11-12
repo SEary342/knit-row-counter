@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 
 export default defineConfig({
+  base: '/knit-row-counter/',
   plugins: [react(), viteSingleFile()],
   define: {
     'process.env': {},

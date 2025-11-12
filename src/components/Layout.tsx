@@ -1,16 +1,17 @@
 import React from 'react'
 import {
-  Box,
   AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
+  Box,
+  Divider,
   Drawer,
+  IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider,
+  Toolbar,
+  Typography,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import ListAltIcon from '@mui/icons-material/ListAlt'
@@ -25,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <AppBar position="fixed" color="primary">
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -53,42 +54,48 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           },
         }}
       >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List
-            sx={{
-              '& .MuiListItemIcon-root': {
-                color: 'text.primary',
-              },
-              '& .MuiListItemText-primary': {
-                color: 'text.primary',
-                fontWeight: 500,
-                letterSpacing: 0.2,
-              },
-            }}
-          >
-            <ListItem component={RouterLink} to="/" onClick={() => setOpen(false)}>
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <ListItemText primary="Projects" />
-            </ListItem>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Toolbar />
+          <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <List>
+              <ListItem disablePadding>
+                <ListItemButton component={RouterLink} to="/" onClick={() => setOpen(false)}>
+                  <ListItemIcon>
+                    <HomeIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Projects" />
+                </ListItemButton>
+              </ListItem>
 
-            <ListItem component={RouterLink} to="/settings" onClick={() => setOpen(false)}>
-              <ListItemIcon>
-                <ListAltIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to="/settings"
+                  onClick={() => setOpen(false)}
+                >
+                  <ListItemIcon>
+                    <ListAltIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Settings" />
+                </ListItemButton>
+              </ListItem>
 
-            <ListItem component={RouterLink} to="/" onClick={() => setOpen(false)}>
-              <ListItemIcon>
-                <ImportExportIcon />
-              </ListItemIcon>
-              <ListItemText primary="Import / Export" />
-            </ListItem>
-          </List>
+              <ListItem disablePadding>
+                <ListItemButton component={RouterLink} to="/" onClick={() => setOpen(false)}>
+                  <ListItemIcon>
+                    <ImportExportIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Import / Export" />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Box>
           <Divider />
+          <Box sx={{ p: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              Version: {import.meta.env.APP_VERSION}
+            </Typography>
+          </Box>
         </Box>
       </Drawer>
 
