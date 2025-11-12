@@ -1,11 +1,12 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material'
 
 import Layout from './components/Layout'
 import ProjectPickerView from './pages/ProjectPickerView'
 import ProjectView from './pages/ProjectView'
 import { useAppSelector } from './app/hooks'
+import PWABadge from './PWABadge'
 
 export default function App() {
   const darkMode = useAppSelector((s) => s?.ui?.darkMode ?? true)
@@ -30,6 +31,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
+      <Box sx={{ position: 'fixed', bottom: 16, left: 16, zIndex: 1 }}>
+        <PWABadge />
+      </Box>
     </ThemeProvider>
   )
 }
