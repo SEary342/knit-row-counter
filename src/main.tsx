@@ -9,7 +9,7 @@ import App from './App'
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter basename={import.meta.env.ROUTER_BASENAME}>
         <App />
       </BrowserRouter>
     </Provider>
