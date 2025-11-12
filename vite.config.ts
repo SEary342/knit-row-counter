@@ -2,43 +2,14 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
-import basicSsl from '@vitejs/plugin-basic-ssl'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    basicSsl(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: false,
-
-      pwaAssets: {
-        disabled: false,
-        config: true,
-      },
-
-      manifest: {
-        name: 'knit-row-counter',
-        short_name: 'row-counter',
-        description: 'Row counter app',
-        theme_color: '#ffffff',
-      },
-
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-        cleanupOutdatedCaches: true,
-        clientsClaim: true,
-      },
-
-      devOptions: {
-        enabled: false,
-        navigateFallback: 'index.html',
-        suppressWarnings: true,
-        type: 'module',
-      },
-    }),
-  ],
+  plugins: [react(), viteSingleFile()],
+  define: {
+    'process.env': {},
+    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+  },
   test: {
     globals: true,
     environment: 'jsdom',
