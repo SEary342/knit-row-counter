@@ -5,12 +5,10 @@ import react from '@vitejs/plugin-react'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/',
   plugins: [react(), viteSingleFile()],
   define: {
     'process.env': {},
-    'import.meta.env.ROUTER_BASENAME': JSON.stringify(
-      process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/',
-    ),
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
   },
   test: {

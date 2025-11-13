@@ -9,7 +9,7 @@ import App from './App'
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <HashRouter basename={import.meta.env.ROUTER_BASENAME}>
+      <HashRouter>
         <App />
       </HashRouter>
     </Provider>
