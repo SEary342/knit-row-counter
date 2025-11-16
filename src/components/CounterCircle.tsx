@@ -33,6 +33,7 @@ export default function CounterCircle({
   color,
 }: Props) {
   const percent = max && max > 0 ? Math.min(100, Math.round((value / max) * 100)) : null
+  const isSmall = size < 180
 
   return (
     <Box sx={{ width: size, height: size, position: 'relative' }}>
@@ -59,7 +60,7 @@ export default function CounterCircle({
               {label}
             </Typography>
           )}
-          <Typography variant="h4" align="center">
+          <Typography variant={isSmall ? 'h5' : 'h4'} align="center">
             {value}
             {showFraction && max ? ` / ${max}` : ''}
           </Typography>
@@ -75,12 +76,20 @@ export default function CounterCircle({
           )}
 
           <Stack direction="row" spacing={2} alignItems="center">
-            <IconButton onClick={onDecrement} aria-label="decrement" size="large">
-              <RemoveIcon />
+            <IconButton
+              onClick={onDecrement}
+              aria-label="decrement"
+              size={isSmall ? 'medium' : 'large'}
+            >
+              <RemoveIcon fontSize={isSmall ? 'small' : 'inherit'} />
             </IconButton>
 
-            <IconButton onClick={onIncrement} aria-label="increment" size="large">
-              <AddIcon />
+            <IconButton
+              onClick={onIncrement}
+              aria-label="increment"
+              size={isSmall ? 'medium' : 'large'}
+            >
+              <AddIcon fontSize={isSmall ? 'small' : 'inherit'} />
             </IconButton>
           </Stack>
         </Stack>

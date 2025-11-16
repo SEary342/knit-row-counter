@@ -1,4 +1,3 @@
-import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Button,
@@ -6,7 +5,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   Stack,
   TextField,
   Tooltip,
@@ -21,11 +19,13 @@ import LinkSwitch from './LinkSwitch'
 
 interface SectionDialogProps {
   section?: SectionConfig
+  open: boolean
+  onClose: () => void
+  trigger?: React.ReactNode
 }
 
-const SectionDialog = ({ section }: SectionDialogProps) => {
+const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) => {
   const dispatch = useDispatch()
-  const [open, setOpen] = useState(false)
   const [formState, setFormState] = useState({
     name: '',
     repeatRows: 0,
@@ -54,26 +54,24 @@ const SectionDialog = ({ section }: SectionDialogProps) => {
           })
         : addSection({ section: { name, repeatRows } }),
     )
-    handleClose()
+    onClose()
   }
 
   const handleLinkClick = () => {
     if (section) dispatch(setLinked({ id: section.id, status: !section.linked }))
   }
 
-  const handleClose = () => setOpen(false)
-
   return (
     <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
-      <Tooltip title="Link/Unlink From Global Counter">
-        <LinkSwitch onClick={handleLinkClick} checked={section?.linked ?? true} />
-      </Tooltip>
-      <Tooltip title="Section Settings">
-        <IconButton size="small" onClick={() => setOpen(true)}>
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
-      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+      {section && (
+        <>
+          <Tooltip title="Link/Unlink From Global Counter">
+            <LinkSwitch onClick={handleLinkClick} checked={section.linked ?? true} />
+          </Tooltip>
+        </>
+      )}
+      {trigger}
+      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
         <DialogTitle>{section ? 'Edit Section' : 'Create Section'}</DialogTitle>
 
         <form action={handleSave}>
@@ -100,7 +98,7 @@ const SectionDialog = ({ section }: SectionDialogProps) => {
 
           <DialogActions>
             <Box display="flex" flex={1} justifyContent="space-between">
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={onClose}>Cancel</Button>
               <Button type="submit">Save</Button>
             </Box>
           </DialogActions>
