@@ -15,8 +15,9 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import ListAltIcon from '@mui/icons-material/ListAlt'
-import HomeIcon from '@mui/icons-material/Home'
-import ImportExportIcon from '@mui/icons-material/ImportExport'
+import HomeIcon from '@mui/icons-material/Home' // Projects
+import FileUploadIcon from '@mui/icons-material/FileUpload' // Import
+import FileDownloadIcon from '@mui/icons-material/FileDownload' // Export
 import { Link as RouterLink } from 'react-router-dom'
 
 const drawerWidth = 260
@@ -81,11 +82,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </ListItem>
 
               <ListItem disablePadding>
-                <ListItemButton component={RouterLink} to="/" onClick={() => setOpen(false)}>
+                <ListItemButton
+                  onClick={() => {
+                    alert('Import not implemented in skeleton')
+                    setOpen(false)
+                  }}
+                >
                   <ListItemIcon>
-                    <ImportExportIcon />
+                    <FileUploadIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Import / Export" />
+                  <ListItemText primary="Import" />
+                </ListItemButton>
+              </ListItem>
+
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => alert('Export not implemented in skeleton')}>
+                  <ListItemIcon>
+                    <FileDownloadIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Export" />
                 </ListItemButton>
               </ListItem>
             </List>

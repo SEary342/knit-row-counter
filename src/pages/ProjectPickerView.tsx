@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Typography,
@@ -16,11 +17,9 @@ import {
   ListItemButton,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import FileUploadIcon from '@mui/icons-material/FileUpload'
+
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
-import { useNavigate } from 'react-router-dom'
 
 export default function ProjectPickerView() {
   const dispatch = useAppDispatch()
@@ -57,25 +56,9 @@ export default function ProjectPickerView() {
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5">Projects</Typography>
-        <Stack direction="row" spacing={1}>
-          <Button
-            variant="contained"
-            startIcon={<FileUploadIcon />}
-            onClick={() => alert('Import not implemented in skeleton')}
-          >
-            Import
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<FileDownloadIcon />}
-            onClick={() => alert('Export not implemented in skeleton')}
-          >
-            Export
-          </Button>
-          <Button variant="contained" onClick={() => setOpenNew(true)}>
-            New Project
-          </Button>
-        </Stack>
+        <Button variant="contained" onClick={() => setOpenNew(true)}>
+          New Project
+        </Button>
       </Stack>
 
       <List>
@@ -114,6 +97,7 @@ export default function ProjectPickerView() {
             label="Project name"
             fullWidth
             autoFocus
+            sx={{ mt: 1 }}
           />
         </DialogContent>
         <DialogActions>
