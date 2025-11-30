@@ -75,14 +75,7 @@ export default function ProjectPickerView() {
             }
           >
             <ListItemButton selected={p.id === currentId} onClick={() => handleSelect(p.id)}>
-              <ListItemText
-                primary={p.name}
-                secondary={
-                  p.sections?.[0]
-                    ? `Section: ${p.sections[0].currentRow} / ${p.sections[0].repeatRows ?? '?'}`
-                    : `Rows: ${p.currentRow}`
-                }
-              />
+              <ListItemText primary={p.name} secondary={getSecondaryText(p)} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -109,4 +102,24 @@ export default function ProjectPickerView() {
       </Dialog>
     </Box>
   )
+}
+
+import type { Project } from '../features/projects/types'
+
+const getSecondaryText = (project: Project) => {
+  const calculatedTotalRows = project.sections.reduce((total, section) => {
+    if (section.totalRepeats && section.repeatRows) {
+      return total + section.totalRepeats * section.repeatRows
+    }
+    return total
+  }, 0)
+
+  const maxRows = project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)
+
+  if (maxRows && maxRows > 0) {
+    const percent = Math.min(100, Math.round((project.currentRow / maxRows) * 100))
+    return `${percent}% complete (${project.currentRow.toLocaleString()} / ${maxRows.toLocaleString()} rows)`
+  }
+
+  return `Current row: ${project.currentRow.toLocaleString()}`
 }

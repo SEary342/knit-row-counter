@@ -1,10 +1,15 @@
+import { useState } from 'react'
+import { IconButton, Tooltip } from '@mui/material'
+import SettingsIcon from '@mui/icons-material/Settings'
+
 import type { Project } from '../features/projects/types'
 import { decrementRow, incrementRow } from '../features/projects/projectsSlice'
-import { useAppDispatch } from '../app/hooks'
 import type { DisplaySize } from '../types'
+import { useAppDispatch } from '../app/hooks'
 
 import CounterCircle from './CounterCircle'
 import CounterCard from './CounterCard'
+import GlobalDialog from './GlobalDialog'
 
 interface globalCardProps {
   project: Project
@@ -13,18 +18,60 @@ interface globalCardProps {
 
 const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
   const dispatch = useAppDispatch()
+  const [dialogOpen, setDialogOpen] = useState(false)
   const circleSize = displaySize === 'small' ? 140 : displaySize === 'medium' ? 180 : 220
 
+  const calculatedTotalRows = project.sections.reduce((total, section) => {
+    if (section.totalRepeats && section.repeatRows) {
+      return total + section.totalRepeats * section.repeatRows
+    }
+    return total
+  }, 0)
+
+  const totalStitches = project.sections.reduce((total, section) => {
+    if (!section.stitchCount || !section.repeatRows) {
+      return total
+    }
+    // Calculate total rows completed for the section
+    const completedRepeatRows = section.repeatCount * section.repeatRows
+    const currentRepeatRows = section.currentRow
+    const sectionTotalRows = completedRepeatRows + currentRepeatRows
+
+    // Add to project total
+    return total + sectionTotalRows * section.stitchCount
+  }, 0)
+
   return (
-    <CounterCard>
+    <CounterCard
+      title="Global"
+      cardActions={
+        <GlobalDialog
+          project={project}
+          calculatedTotalRows={calculatedTotalRows}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          trigger={
+            <Tooltip title="Global Settings">
+              <IconButton
+                size="small"
+                onClick={() => setDialogOpen(true)}
+                aria-label="global settings"
+              >
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+          }
+        />
+      }
+    >
       <CounterCircle
-        label="Global"
         value={project.currentRow}
         onIncrement={() => dispatch(incrementRow())}
         onDecrement={() => dispatch(decrementRow())}
+        max={project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)}
         size={circleSize}
         showFraction={false}
-        smallNote={project.totalRows ? `Goal: ${project.totalRows}` : 'No total set'}
+        smallNote={totalStitches > 0 ? `Total Stitches: ${totalStitches.toLocaleString()}` : ''}
         color="success"
       />
     </CounterCard>

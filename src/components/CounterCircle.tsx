@@ -33,10 +33,16 @@ export default function CounterCircle({
   color,
 }: Props) {
   const percent = max && max > 0 ? Math.min(100, Math.round((value / max) * 100)) : null
+  const isMedium = size < 220
   const isSmall = size < 180
 
   return (
-    <Box sx={{ width: size, height: size, position: 'relative' }}>
+    <Stack sx={{ width: size, height: size, position: 'relative' }} gap={2}>
+      {label && (
+        <Typography variant="h6" align="center">
+          {label}
+        </Typography>
+      )}
       <CircularProgress
         variant="determinate"
         value={percent ?? 100}
@@ -54,13 +60,8 @@ export default function CounterCircle({
           pointerEvents: 'none',
         }}
       >
-        <Stack spacing={1} alignItems="center" sx={{ pointerEvents: 'auto' }}>
-          {label && (
-            <Typography variant="subtitle2" align="center">
-              {label}
-            </Typography>
-          )}
-          <Typography variant={isSmall ? 'h5' : 'h4'} align="center">
+        <Stack spacing={0.5} alignItems="center" sx={{ pointerEvents: 'auto' }}>
+          <Typography variant={isSmall ? 'caption' : isMedium ? 'h6' : 'h3'} align="center">
             {value}
             {showFraction && max ? ` / ${max}` : ''}
           </Typography>
@@ -74,26 +75,24 @@ export default function CounterCircle({
               {smallNote}
             </Typography>
           )}
-
           <Stack direction="row" spacing={2} alignItems="center">
             <IconButton
               onClick={onDecrement}
               aria-label="decrement"
-              size={isSmall ? 'medium' : 'large'}
+              size={isSmall ? 'small' : 'large'}
             >
-              <RemoveIcon fontSize={isSmall ? 'small' : 'inherit'} />
+              <RemoveIcon fontSize={isSmall ? 'small' : isMedium ? 'medium' : 'large'} />
             </IconButton>
-
             <IconButton
               onClick={onIncrement}
               aria-label="increment"
-              size={isSmall ? 'medium' : 'large'}
+              size={isSmall ? 'small' : 'large'}
             >
-              <AddIcon fontSize={isSmall ? 'small' : 'inherit'} />
+              <AddIcon fontSize={isSmall ? 'small' : isMedium ? 'medium' : 'large'} />
             </IconButton>
           </Stack>
         </Stack>
       </Box>
-    </Box>
+    </Stack>
   )
 }
