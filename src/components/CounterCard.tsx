@@ -10,7 +10,7 @@ interface CounterCardProps {
 
 const CounterCard = ({ title, children, cardActions, footerContent }: CounterCardProps) => (
   <Card>
-    <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'center', pb:0 }}>
+    <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'center', pb: 0 }}>
       <Stack spacing={2} alignItems="center">
         {title && (
           <Typography variant="subtitle1" align="center">
@@ -21,8 +21,10 @@ const CounterCard = ({ title, children, cardActions, footerContent }: CounterCar
       </Stack>
     </CardContent>
     {footerContent && (
-      <Box sx={{textAlign: 'center' }}>
-        <Typography variant="caption" color='text.secondary'>{footerContent}</Typography>
+      <Box sx={{ textAlign: 'justify', pt: 1, px: 2 }}>
+        <Typography variant="caption" color="text.secondary">
+          {footerContent}
+        </Typography>
       </Box>
     )}
     <CardActions>{cardActions}</CardActions>
