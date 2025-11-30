@@ -21,6 +21,8 @@ import { Link as RouterLink } from 'react-router-dom'
 import { SnackbarProvider, useSnackbar } from 'notistack'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { importProjects } from '../features/projects/projectsSlice'
+import LogoIcon from './LogoIcon'
+import { LOGO_SVG_URL } from './logoData'
 
 const drawerWidth = 260
 
@@ -79,6 +81,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           >
             <MenuIcon />
           </IconButton>
+          <LogoIcon sx={{ mr: 1 }} />
           <Typography variant="h6" noWrap component="div">
             Knit Row Counter
           </Typography>
@@ -148,7 +151,28 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '50vmin',
+            height: '50vmin',
+            backgroundImage: `url('${LOGO_SVG_URL}')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'contain',
+            opacity: 0.05,
+            zIndex: -1,
+          },
+        }}
+      >
         <Toolbar />
         {children}
       </Box>

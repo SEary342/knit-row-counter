@@ -10,7 +10,8 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write .",
     "preview": "vite preview --host",
-    "test": "vitest"
+    "test": "vitest",
+    "update-favicon": "node src/components/update-favicon.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
