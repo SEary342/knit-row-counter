@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../app/hooks'
 
 import type { SectionConfig } from '../features/projects/types'
 import {
@@ -23,6 +23,7 @@ import {
 import LinkSwitch from './LinkSwitch'
 import ConfirmationDialog from './ConfirmationDialog'
 import PatternEditor from './PatternEditor'
+import { type PatternRowConfig } from '../features/projects/types'
 
 interface SectionDialogProps {
   section?: SectionConfig
@@ -31,16 +32,23 @@ interface SectionDialogProps {
   trigger?: React.ReactNode
 }
 
+interface FormStateConfig {
+  name: string
+  repeatRows: number | null
+  totalRepeats: number | null
+  stitchCount: number | null
+}
+
 const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormStateConfig>({
     name: '',
-    repeatRows: 0,
-    totalRepeats: 0,
-    stitchCount: 0,
+    repeatRows: null,
+    totalRepeats: null,
+    stitchCount: null,
   })
-  const [pattern, setPattern] = useState<string[]>([])
+  const [pattern, setPattern] = useState<PatternRowConfig[]>([])
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -51,27 +59,37 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
     if (section) {
       setFormState({
         name: section.name || '',
-        repeatRows: section.repeatRows || 1,
-        totalRepeats: section.totalRepeats || 0,
-        stitchCount: section.stitchCount || 0,
+        repeatRows: section.repeatRows || null,
+        totalRepeats: section.totalRepeats || null,
+        stitchCount: section.stitchCount || null,
       })
       setPattern(section.pattern || [])
     } else {
-      setFormState({ name: '', repeatRows: 1, totalRepeats: 0, stitchCount: 0 })
+      setFormState({ name: '', repeatRows: null, totalRepeats: null, stitchCount: null })
       setPattern([])
     }
   }, [section, open])
 
   useEffect(() => {
-    setFormState((prev) => ({ ...prev, repeatRows: pattern.length || 1 }))
+    setFormState((prev) => ({ ...prev, repeatRows: pattern.length || null }))
   }, [pattern])
 
+  const averageStitches =
+    pattern.length > 0
+      ? Math.round(
+          pattern.reduce((acc, row) => acc + (row.stitches ?? 0), 0) /
+            pattern.filter((row) => row.stitches != null).length,
+        ) || ''
+      : ''
   // React 19 <form> submission
+  const getNumericValue = (value: FormDataEntryValue | null) =>
+    value === '' || value === null ? null : Number(value)
+
   const handleSave = async (formData: FormData) => {
     const name = String(formData.get('name') ?? '')
-    const repeatRows = Number(formData.get('repeatRows') ?? 0)
-    const totalRepeats = Number(formData.get('totalRepeats') ?? 0)
-    const stitchCount = Number(formData.get('stitchCount') ?? 0)
+    const repeatRows = getNumericValue(formData.get('repeatRows'))
+    const totalRepeats = getNumericValue(formData.get('totalRepeats'))
+    const stitchCount = getNumericValue(formData.get('stitchCount'))
 
     dispatch(
       section?.id
@@ -105,7 +123,7 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
         </>
       )}
       {trigger}
-      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog open={open} maxWidth="xs" fullWidth>
         <DialogTitle>{section ? 'Edit Section' : 'Create Section'}</DialogTitle>
 
         <form action={handleSave}>
@@ -124,8 +142,13 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
                 label="Repeat Rows"
                 name="repeatRows"
                 type="number"
-                inputProps={{ min: 0 }}
-                value={formState.repeatRows}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.repeatRows ?? ''}
                 onChange={handleFormChange}
                 fullWidth
               />
@@ -133,8 +156,14 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
                 label="Stitches per Row"
                 name="stitchCount"
                 type="number"
-                inputProps={{ min: 0 }}
-                value={formState.stitchCount}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.stitchCount ?? ''}
+                placeholder={String(averageStitches)}
                 onChange={handleFormChange}
                 fullWidth
               />
@@ -142,8 +171,13 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
                 label="Total Repeats"
                 name="totalRepeats"
                 type="number"
-                inputProps={{ min: 0 }}
-                value={formState.totalRepeats}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.totalRepeats ?? ''}
                 onChange={handleFormChange}
                 fullWidth
               />

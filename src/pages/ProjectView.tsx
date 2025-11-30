@@ -2,10 +2,16 @@ import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Stack, Paper, IconButton, TextField, Button, Grid } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { useSnackbar } from 'notistack'
 import Add from '@mui/icons-material/Add'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
-import { updateNotes, updatePatternUrl, renameProject } from '../features/projects/projectsSlice'
+import {
+  updateNotes,
+  updatePatternUrl,
+  renameProject,
+  importProjects,
+} from '../features/projects/projectsSlice'
 import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
@@ -14,9 +20,11 @@ const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { enqueueSnackbar } = useSnackbar()
   const project = useAppSelector((s) => s.projects.projects.find((p) => p.id === id))
 
   const [addSectionOpen, setAddSectionOpen] = React.useState(false)
+  const importInputRef = React.useRef<HTMLInputElement>(null)
   React.useEffect(() => {
     if (!project) {
       // if no project found, navigate back home
@@ -25,6 +33,49 @@ const ProjectView = () => {
   }, [project, navigate])
 
   if (!project) return null
+
+  const handleExport = () => {
+    const safeName = project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    const dataStr = JSON.stringify(project, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `knit-proj-${safeName}-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target?.result as string)
+        if (imported.id !== project.id) {
+          enqueueSnackbar(
+            `Import failed: The project file you selected does not match the current project "${project.name}".`,
+            { variant: 'error' },
+          )
+          return
+        }
+
+        // The importProjects reducer expects an array of projects
+        dispatch(importProjects([imported]))
+        enqueueSnackbar(`Project "${imported.name}" has been imported.`, { variant: 'success' })
+      } catch (error) {
+        console.error('Failed to parse import file:', error)
+        enqueueSnackbar('Error: Could not import file. Please ensure it is a valid JSON export.', {
+          variant: 'error',
+        })
+      }
+    }
+    reader.readAsText(file)
+  }
 
   return (
     <Box>
@@ -60,7 +111,7 @@ const ProjectView = () => {
 
       <Paper sx={{ p: 2, mt: 3 }}>
         <Stack spacing={2}>
-          <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
             <Button
               variant="outlined"
               onClick={() => {
@@ -70,6 +121,21 @@ const ProjectView = () => {
             >
               Rename
             </Button>
+            <Button variant="outlined" onClick={() => importInputRef.current?.click()}>
+              Import Project
+            </Button>
+            <Button variant="outlined" onClick={handleExport}>
+              Export Project
+            </Button>
+            <input
+              type="file"
+              ref={importInputRef}
+              hidden
+              accept=".json"
+              onChange={handleImport}
+              // Allow re-importing the same file
+              onClick={(e) => ((e.target as HTMLInputElement).value = '')}
+            />
           </Stack>
 
           <TextField

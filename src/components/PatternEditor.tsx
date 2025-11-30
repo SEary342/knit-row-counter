@@ -21,16 +21,18 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import { nanoid } from 'nanoid'
+import type { PatternRowConfig } from '../features/projects/types'
 
 interface PatternRow {
   id: GridRowId
   instruction: string
+  stitches: number | null
   isNew?: boolean
 }
 
 interface PatternEditorProps {
-  value: string[]
-  onChange: (newValue: string[]) => void
+  value: PatternRowConfig[]
+  onChange: (newValue: PatternRowConfig[]) => void
 }
 
 declare module '@mui/x-data-grid' {
@@ -47,7 +49,7 @@ function EditToolbar(props: EditToolbarProps) {
 
   const handleClick = () => {
     const id = nanoid()
-    setRows((oldRows) => [...oldRows, { id, instruction: '', isNew: true }])
+    setRows((oldRows) => [...oldRows, { id, instruction: '', stitches: null, isNew: true }])
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: 'instruction' },
@@ -82,13 +84,13 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
       isInternalUpdate.current = false
       return
     }
-    const syncedRows = value.map((instruction) => ({ id: nanoid(), instruction }))
+    const syncedRows = value.map((row) => ({ id: nanoid(), ...row }))
     setRows(syncedRows)
   }, [value])
 
   const updateExternalState = (updatedRows: PatternRow[]) => {
     isInternalUpdate.current = true
-    onChange(updatedRows.map((r) => r.instruction))
+    onChange(updatedRows.map(({ instruction, stitches }) => ({ instruction, stitches })))
   }
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -125,7 +127,7 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
       if (index === -1) return oldRows
 
       const newId = nanoid()
-      const newRow = { ...oldRows[index], id: newId, isNew: true }
+      const newRow = { ...oldRows[index], id: newId }
 
       const newRows = [...oldRows.slice(0, index + 1), newRow, ...oldRows.slice(index + 1)]
       updateExternalState(newRows)
@@ -195,6 +197,15 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
       headerName: 'Instruction',
       flex: 1,
       editable: true,
+    },
+    {
+      field: 'stitches',
+      headerName: 'Stitches',
+      type: 'number',
+      width: 90,
+      editable: true,
+      align: 'center',
+      headerAlign: 'center',
     },
     {
       field: 'actions',
