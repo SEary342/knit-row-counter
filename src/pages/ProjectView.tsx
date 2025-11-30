@@ -42,18 +42,18 @@ const ProjectView = () => {
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <GlobalCard project={project} displaySize="medium" />
+          <GlobalCard project={project} displaySize="large" />
         </Grid>
         {project.sections.map((section) => (
           <Grid
             key={section.id}
             size={{
-              xs: section.linked ? 12 : 6,
-              sm: section.linked ? 6 : 4,
-              md: section.linked ? 4 : 3,
+              xs: 6,
+              sm: 4,
+              md: 3,
             }}
           >
-            <SectionCard section={section} displaySize={section.linked ? 'medium' : 'small'} />
+            <SectionCard section={section} displaySize="small" />
           </Grid>
         ))}
       </Grid>

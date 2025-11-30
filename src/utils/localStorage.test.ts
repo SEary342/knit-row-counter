@@ -50,6 +50,9 @@ describe('localStorage utils', () => {
             currentRow: 10,
             repeatRows: null,
             repeatCount: 0,
+            totalRepeats: null,
+            pattern: [],
+            stitchCount: null
           },
         ],
         totalRows: null,

@@ -31,6 +31,9 @@ export const projectsSlice = createSlice({
             currentRow: 0,
             repeatCount: 0,
             linked: true,
+            totalRepeats: null,
+            pattern: [],
+            stitchCount: null,
           },
         ],
         notes: '',
@@ -61,6 +64,14 @@ export const projectsSlice = createSlice({
       if (section) section.linked = action.payload.status
     },
 
+    setTotalRows: (state, action: PayloadAction<number | null>) => {
+      const project = findProject(state)
+      if (project) {
+        project.totalRows = action.payload
+        project.lastModified = Date.now()
+      }
+    },
+
     addSection: (state, action: PayloadAction<{ section: Partial<SectionConfig> }>) => {
       const project = findProject(state)
       if (!project) return
@@ -68,6 +79,9 @@ export const projectsSlice = createSlice({
         id: v4(),
         name: action.payload.section.name ?? '',
         repeatRows: action.payload.section.repeatRows ?? 0,
+        totalRepeats: action.payload.section.totalRepeats ?? null,
+        pattern: action.payload.section.pattern ?? [],
+        stitchCount: action.payload.section.stitchCount ?? null,
         currentRow: 0,
         repeatCount: 0,
       }
@@ -90,20 +104,36 @@ export const projectsSlice = createSlice({
       project.lastModified = Date.now()
     },
 
+    deleteSection: (state, action: PayloadAction<string>) => {
+      const project = findProject(state)
+      if (!project) return
+
+      project.sections = project.sections.filter((s) => s.id !== action.payload)
+
+      project.lastModified = Date.now()
+    },
+
     incrementRow: (state, action: PayloadAction<string | undefined>) => {
       const sectionId = action.payload
       const project = findProject(state)
       if (!project) return
 
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
+      const incrementLogic = (section: SectionConfig) => {
+        section.currentRow += 1
+        if (section.repeatRows) {
+          if (section.currentRow === section.repeatRows) {
+            section.repeatCount += 1
+          }
+          if (section.currentRow > section.repeatRows) {
+            section.currentRow = 1
+          }
+        }
+      }
 
       if (targetSection && !targetSection.linked) {
         // If the target section is not linked, only increment it.
-        targetSection.currentRow += 1
-        if (targetSection.repeatRows && targetSection.currentRow > targetSection.repeatRows) {
-          targetSection.currentRow = 1
-          targetSection.repeatCount += 1
-        }
+        incrementLogic(targetSection)
         project.lastModified = Date.now()
         return
       }
@@ -112,11 +142,7 @@ export const projectsSlice = createSlice({
       project.currentRow += 1
       for (const section of project.sections) {
         if (section.linked) {
-          section.currentRow += 1
-          if (section.repeatRows && section.currentRow > section.repeatRows) {
-            section.currentRow = 1
-            section.repeatCount += 1
-          }
+          incrementLogic(section)
         }
       }
 
@@ -131,11 +157,17 @@ export const projectsSlice = createSlice({
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
 
       const decrementLogic = (section: SectionConfig) => {
-        if (section.currentRow <= 1 && section.repeatCount > 0 && section.repeatRows) {
-          section.repeatCount -= 1
-          section.currentRow = section.repeatRows
+        if (section.repeatRows) {
+          if (section.currentRow === section.repeatRows && section.repeatCount > 0) {
+            section.currentRow--
+            section.repeatCount--
+          } else if (section.currentRow === 1) {
+            section.currentRow = section.repeatRows
+          } else {
+            section.currentRow--
+          }
         } else if (section.currentRow > 0) {
-          section.currentRow -= 1
+          section.currentRow--
         }
       }
 
@@ -148,12 +180,26 @@ export const projectsSlice = createSlice({
 
       // Otherwise, decrement the global counter and all linked sections.
       if (project.currentRow > 0) {
-        project.currentRow -= 1
+        project.currentRow--
         for (const section of project.sections) {
           if (section.linked) {
             decrementLogic(section)
           }
         }
+      }
+
+      project.lastModified = Date.now()
+    },
+
+    resetProjectProgress: (state) => {
+      const project = findProject(state)
+      if (!project) return
+
+      project.currentRow = 0
+
+      for (const section of project.sections) {
+        section.currentRow = 0
+        section.repeatCount = 0
       }
 
       project.lastModified = Date.now()
@@ -190,12 +236,15 @@ export const {
   renameProject,
   setLinked,
   incrementRow,
+  setTotalRows,
   decrementRow,
   updateNotes,
   updatePatternUrl,
   importProjects,
   updateSection,
+  resetProjectProgress,
   addSection,
+  deleteSection,
 } = projectsSlice.actions
 
 export default projectsSlice.reducer

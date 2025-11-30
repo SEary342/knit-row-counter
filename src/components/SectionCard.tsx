@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 import type { SectionConfig } from '../features/projects/types'
@@ -21,8 +21,29 @@ const SectionCard = ({ section, displaySize = 'large' }: sectionCardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const circleSize = displaySize === 'small' ? 140 : displaySize === 'medium' ? 180 : 220
 
+  const repeatsNote = () => {
+    if (!section) return 'No section configured'
+    if (section.repeatRows && section.repeatRows > 1) {
+      if (section.totalRepeats && section.totalRepeats > 0) {
+        return `Repeats: ${section.repeatCount} / ${section.totalRepeats}`
+      }
+      return `Repeats: ${section.repeatCount}`
+    }
+    return undefined
+  }
+
+  const nextPatternRow = () => {
+    if (!section?.pattern?.length || !section.repeatRows) return null
+
+    const nextRowIndex = (section.currentRow > 0 ? section.currentRow - 1 : 0) % section.repeatRows
+    const patternRow = section.pattern[nextRowIndex]
+
+    return patternRow ? <Typography variant="body2">{patternRow}</Typography> : null
+  }
+
   return (
     <CounterCard
+      title={section?.name}
       cardActions={
         <SectionDialog
           section={section}
@@ -37,17 +58,17 @@ const SectionCard = ({ section, displaySize = 'large' }: sectionCardProps) => {
           }
         />
       }
+      footerContent={<Box>{nextPatternRow()}</Box>}
     >
       <CounterCircle
-        label={section?.name}
         value={section?.currentRow ?? 0}
         max={section?.repeatRows ?? null}
         onIncrement={() => dispatch(incrementRow(section?.id))}
         onDecrement={() => dispatch(decrementRow(section?.id))}
         size={circleSize}
         showFraction={true}
-        smallNote={section ? `Repeats: ${section.repeatCount}` : 'No section configured'}
-        color="secondary"
+        smallNote={repeatsNote()}
+        color={section.linked ? 'secondary' : 'info'}
       />
     </CounterCard>
   )

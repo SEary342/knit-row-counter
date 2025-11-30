@@ -5,6 +5,9 @@ export interface SectionConfig {
   currentRow: number
   repeatCount: number // how many times section reset completed
   linked?: boolean
+  totalRepeats: number | null
+  pattern: string[]
+  stitchCount: number | null
 }
 
 export interface Project {
