@@ -50,19 +50,7 @@ export const projectsSlice = createSlice({
         name: action.payload.name,
         totalRows: null,
         currentRow: 0,
-        sections: [
-          {
-            id: v4(),
-            name: 'Section 1',
-            repeatRows: null,
-            currentRow: 0,
-            repeatCount: 0,
-            linked: true,
-            totalRepeats: null,
-            pattern: [],
-            stitchCount: null,
-          },
-        ],
+        sections: [],
         notes: '',
         lastModified: Date.now(),
       }

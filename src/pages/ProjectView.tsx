@@ -1,7 +1,19 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Stack, Paper, IconButton, TextField, Button, Grid } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  TextField,
+  Button,
+  Grid,
+  Tooltip,
+} from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import { useSnackbar } from 'notistack'
 import Add from '@mui/icons-material/Add'
 
@@ -121,12 +133,16 @@ const ProjectView = () => {
             >
               Rename
             </Button>
-            <Button variant="outlined" onClick={() => importInputRef.current?.click()}>
-              Import Project
-            </Button>
-            <Button variant="outlined" onClick={handleExport}>
-              Export Project
-            </Button>
+            <Tooltip title="Import Project">
+              <IconButton onClick={() => importInputRef.current?.click()}>
+                <FileUploadIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Export Project">
+              <IconButton onClick={handleExport}>
+                <FileDownloadIcon />
+              </IconButton>
+            </Tooltip>
             <input
               type="file"
               ref={importInputRef}

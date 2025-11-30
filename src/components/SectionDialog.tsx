@@ -8,6 +8,8 @@ import {
   Stack,
   TextField,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '../app/hooks'
@@ -41,6 +43,8 @@ interface FormStateConfig {
 
 const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [formState, setFormState] = useState<FormStateConfig>({
     name: '',
@@ -123,7 +127,7 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
         </>
       )}
       {trigger}
-      <Dialog open={open} maxWidth="xs" fullWidth>
+      <Dialog open={open} maxWidth="xs" fullWidth fullScreen={isMobile}>
         <DialogTitle>{section ? 'Edit Section' : 'Create Section'}</DialogTitle>
 
         <form action={handleSave}>

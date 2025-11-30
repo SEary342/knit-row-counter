@@ -1,4 +1,4 @@
-import { useState, useEffect, type Dispatch, type SetStateAction, useRef } from 'react'
+import { useState, useEffect, type Dispatch, type SetStateAction, useRef, Fragment } from 'react'
 import {
   DataGrid,
   type GridColDef,
@@ -11,7 +11,16 @@ import {
   type GridToolbarProps,
   GridRowEditStopReasons,
 } from '@mui/x-data-grid'
-import { Box, Button, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -20,6 +29,8 @@ import CancelIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import FullscreenIcon from '@mui/icons-material/Fullscreen'
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 import { nanoid } from 'nanoid'
 import type { PatternRowConfig } from '../features/projects/types'
 
@@ -45,6 +56,8 @@ declare module '@mui/x-data-grid' {
 interface EditToolbarProps extends GridToolbarProps {}
 
 function EditToolbar(props: EditToolbarProps) {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const { setRows, setRowModesModel } = props
 
   const handleClick = () => {
@@ -66,10 +79,24 @@ function EditToolbar(props: EditToolbarProps) {
         px: 2,
       }}
     >
-      <Typography variant="h6">Pattern</Typography>
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography variant="h6">Pattern</Typography>
+      </Box>
+
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick} size="small">
         Add row
       </Button>
+
+      {isMobile && (
+        <Tooltip title="Toggle Fullscreen">
+          <IconButton
+            onClick={() => (props as any).onToggleFullscreen()}
+            aria-label="toggle fullscreen"
+          >
+            {(props as any).fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </IconButton>
+        </Tooltip>
+      )}
     </Box>
   )
 }
@@ -77,6 +104,7 @@ function EditToolbar(props: EditToolbarProps) {
 const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
   const [rows, setRows] = useState<PatternRow[]>([])
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
+  const [fullscreen, setFullscreen] = useState(false)
   const isInternalUpdate = useRef(false)
 
   useEffect(() => {
@@ -185,7 +213,7 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
     {
       field: 'rowNumber',
       headerName: '#',
-      width: 50,
+      width: 10,
       renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
       sortable: false,
       filterable: false,
@@ -202,7 +230,7 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
       field: 'stitches',
       headerName: 'Stitches',
       type: 'number',
-      width: 90,
+      flex: 0.5,
       editable: true,
       align: 'center',
       headerAlign: 'center',
@@ -211,7 +239,7 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      width: 150,
+      width: 90,
       cellClassName: 'actions',
       getActions: (params) => {
         const { id } = params
@@ -288,32 +316,48 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
     },
   ]
 
+  const DataGridComponent = (
+    <DataGrid<PatternRow>
+      rows={rows}
+      columns={columns}
+      editMode="row"
+      rowModesModel={rowModesModel}
+      onRowModesModelChange={handleRowModesModelChange}
+      onRowEditStop={handleRowEditStop}
+      processRowUpdate={processRowUpdate}
+      showToolbar
+      slots={{
+        toolbar: EditToolbar,
+      }}
+      slotProps={{
+        toolbar: {
+          setRows,
+          setRowModesModel,
+          fullscreen,
+          onToggleFullscreen: () => setFullscreen((prev) => !prev),
+        } as GridToolbarProps,
+      }}
+      getRowHeight={() => 'auto'}
+      sx={{
+        '& .MuiDataGrid-actionsCell': {
+          flexWrap: 'wrap',
+        },
+      }}
+      hideFooter
+    />
+  )
+
   return (
-    <Box sx={{ height: 300, width: '100%' }}>
-      <DataGrid<PatternRow>
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        showToolbar
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel } as GridToolbarProps,
-        }}
-        getRowHeight={() => 'auto'}
-        sx={{
-          '& .MuiDataGrid-actionsCell': {
-            flexWrap: 'wrap',
-          },
-        }}
-        hideFooter
-      />
-    </Box>
+    <Fragment>
+      <Box sx={{ height: 300, width: '100%', display: fullscreen ? 'none' : 'block' }}>
+        {DataGridComponent}
+      </Box>
+      {fullscreen && (
+        <Dialog fullScreen open={fullscreen} onClose={() => setFullscreen(false)}>
+          {DataGridComponent}
+        </Dialog>
+      )}
+    </Fragment>
   )
 }
 
