@@ -51,7 +51,7 @@ const GlobalDialog = ({
     <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
       <div />
       {trigger}
-      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog open={open} maxWidth="xs" fullWidth>
         <DialogTitle>Edit Global Settings</DialogTitle>
         <form action={handleSave}>
           <DialogContent>

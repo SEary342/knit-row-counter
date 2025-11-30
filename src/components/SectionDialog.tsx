@@ -8,9 +8,11 @@ import {
   Stack,
   TextField,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../app/hooks'
 
 import type { SectionConfig } from '../features/projects/types'
 import {
@@ -22,6 +24,8 @@ import {
 
 import LinkSwitch from './LinkSwitch'
 import ConfirmationDialog from './ConfirmationDialog'
+import PatternEditor from './PatternEditor'
+import { type PatternRowConfig } from '../features/projects/types'
 
 interface SectionDialogProps {
   section?: SectionConfig
@@ -30,38 +34,66 @@ interface SectionDialogProps {
   trigger?: React.ReactNode
 }
 
+interface FormStateConfig {
+  name: string
+  repeatRows: number | null
+  totalRepeats: number | null
+  stitchCount: number | null
+}
+
 const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormStateConfig>({
     name: '',
-    repeatRows: 0,
-    totalRepeats: 0,
-    pattern: '',
-    stitchCount: 0,
+    repeatRows: null,
+    totalRepeats: null,
+    stitchCount: null,
   })
+  const [pattern, setPattern] = useState<PatternRowConfig[]>([])
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormState((prev) => ({ ...prev, [name]: value }))
+  }
 
   useEffect(() => {
     if (section) {
       setFormState({
         name: section.name || '',
-        repeatRows: section.repeatRows || 1,
-        totalRepeats: section.totalRepeats || 0,
-        pattern: section.pattern?.join('\n') || '',
-        stitchCount: section.stitchCount || 0,
+        repeatRows: section.repeatRows || null,
+        totalRepeats: section.totalRepeats || null,
+        stitchCount: section.stitchCount || null,
       })
+      setPattern(section.pattern || [])
     } else {
-      setFormState({ name: '', repeatRows: 1, totalRepeats: 0, pattern: '', stitchCount: 0 })
+      setFormState({ name: '', repeatRows: null, totalRepeats: null, stitchCount: null })
+      setPattern([])
     }
   }, [section, open])
 
+  useEffect(() => {
+    setFormState((prev) => ({ ...prev, repeatRows: pattern.length || null }))
+  }, [pattern])
+
+  const averageStitches =
+    pattern.length > 0
+      ? Math.round(
+          pattern.reduce((acc, row) => acc + (row.stitches ?? 0), 0) /
+            pattern.filter((row) => row.stitches != null).length,
+        ) || ''
+      : ''
   // React 19 <form> submission
+  const getNumericValue = (value: FormDataEntryValue | null) =>
+    value === '' || value === null ? null : Number(value)
+
   const handleSave = async (formData: FormData) => {
     const name = String(formData.get('name') ?? '')
-    const repeatRows = Number(formData.get('repeatRows') ?? 0)
-    const totalRepeats = Number(formData.get('totalRepeats') ?? 0)
-    const pattern = String(formData.get('pattern') ?? '').split('\n')
-    const stitchCount = Number(formData.get('stitchCount') ?? 0)
+    const repeatRows = getNumericValue(formData.get('repeatRows'))
+    const totalRepeats = getNumericValue(formData.get('totalRepeats'))
+    const stitchCount = getNumericValue(formData.get('stitchCount'))
 
     dispatch(
       section?.id
@@ -95,7 +127,7 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
         </>
       )}
       {trigger}
-      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog open={open} maxWidth="xs" fullWidth fullScreen={isMobile}>
         <DialogTitle>{section ? 'Edit Section' : 'Create Section'}</DialogTitle>
 
         <form action={handleSave}>
@@ -104,7 +136,8 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
               <TextField
                 label="Section Name"
                 name="name"
-                defaultValue={formState.name}
+                value={formState.name}
+                onChange={handleFormChange}
                 required
                 fullWidth
                 autoFocus
@@ -113,34 +146,46 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
                 label="Repeat Rows"
                 name="repeatRows"
                 type="number"
-                slotProps={{ htmlInput: { min: 0 } }}
-                defaultValue={formState.repeatRows}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.repeatRows ?? ''}
+                onChange={handleFormChange}
                 fullWidth
               />
               <TextField
                 label="Stitches per Row"
                 name="stitchCount"
                 type="number"
-                slotProps={{ htmlInput: { min: 0 } }}
-                defaultValue={formState.stitchCount}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.stitchCount ?? ''}
+                placeholder={String(averageStitches)}
+                onChange={handleFormChange}
                 fullWidth
               />
               <TextField
                 label="Total Repeats"
                 name="totalRepeats"
                 type="number"
-                slotProps={{ htmlInput: { min: 0 } }}
-                defaultValue={formState.totalRepeats}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+                value={formState.totalRepeats ?? ''}
+                onChange={handleFormChange}
                 fullWidth
               />
-              <TextField
-                label="Pattern (one line per row)"
-                name="pattern"
-                multiline
-                rows={4}
-                defaultValue={formState.pattern}
-                fullWidth
-              />
+              <PatternEditor value={pattern} onChange={setPattern} />
             </Stack>
           </DialogContent>
 

@@ -14,16 +14,59 @@ import {
   Typography,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import ListAltIcon from '@mui/icons-material/ListAlt'
 import HomeIcon from '@mui/icons-material/Home' // Projects
 import FileUploadIcon from '@mui/icons-material/FileUpload' // Import
 import FileDownloadIcon from '@mui/icons-material/FileDownload' // Export
 import { Link as RouterLink } from 'react-router-dom'
+import { SnackbarProvider, useSnackbar } from 'notistack'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { importProjects } from '../features/projects/projectsSlice'
+import LogoIcon from './LogoIcon'
+import { LOGO_SVG_URL } from './logoData'
 
 const drawerWidth = 260
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+function AppLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const dispatch = useAppDispatch()
+  const projects = useAppSelector((state) => state.projects.projects)
+  const importInputRef = React.useRef<HTMLInputElement>(null)
+
+  const handleExport = () => {
+    const dataStr = JSON.stringify(projects, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `knit-row-counter-export-${new Date().toISOString()}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    setOpen(false)
+  }
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target?.result as string)
+        dispatch(importProjects(imported))
+        enqueueSnackbar('Projects imported successfully.', { variant: 'success' })
+      } catch (error) {
+        console.error('Failed to parse import file:', error)
+        enqueueSnackbar('Error: Could not import file. Please ensure it is a valid JSON export.', {
+          variant: 'error',
+        })
+      }
+    }
+    reader.readAsText(file)
+    setOpen(false)
+  }
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -38,6 +81,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             <MenuIcon />
           </IconButton>
+          <LogoIcon sx={{ mr: 1 }} />
           <Typography variant="h6" noWrap component="div">
             Knit Row Counter
           </Typography>
@@ -70,33 +114,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
               <ListItem disablePadding>
                 <ListItemButton
-                  component={RouterLink}
-                  to="/settings"
-                  onClick={() => setOpen(false)}
-                >
-                  <ListItemIcon>
-                    <ListAltIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Settings" />
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem disablePadding>
-                <ListItemButton
                   onClick={() => {
-                    alert('Import not implemented in skeleton')
-                    setOpen(false)
+                    importInputRef.current?.click()
                   }}
                 >
                   <ListItemIcon>
                     <FileUploadIcon />
                   </ListItemIcon>
                   <ListItemText primary="Import" />
+                  <input
+                    type="file"
+                    ref={importInputRef}
+                    hidden
+                    accept=".json"
+                    onChange={handleImport}
+                  />
                 </ListItemButton>
               </ListItem>
 
               <ListItem disablePadding>
-                <ListItemButton onClick={() => alert('Export not implemented in skeleton')}>
+                <ListItemButton onClick={handleExport}>
                   <ListItemIcon>
                     <FileDownloadIcon />
                   </ListItemIcon>
@@ -114,10 +151,39 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '50vmin',
+            height: '50vmin',
+            backgroundImage: `url('${LOGO_SVG_URL}')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'contain',
+            opacity: 0.05,
+            zIndex: -1,
+          },
+        }}
+      >
         <Toolbar />
         {children}
       </Box>
     </Box>
+  )
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <SnackbarProvider maxSnack={3}>
+      <AppLayout>{children}</AppLayout>
+    </SnackbarProvider>
   )
 }

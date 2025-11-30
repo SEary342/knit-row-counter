@@ -3,7 +3,11 @@ import { IconButton, Tooltip } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 import type { Project } from '../features/projects/types'
-import { decrementRow, incrementRow } from '../features/projects/projectsSlice'
+import {
+  calculateProjectStitches,
+  decrementRow,
+  incrementRow,
+} from '../features/projects/projectsSlice'
 import type { DisplaySize } from '../types'
 import { useAppDispatch } from '../app/hooks'
 
@@ -28,18 +32,7 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
     return total
   }, 0)
 
-  const totalStitches = project.sections.reduce((total, section) => {
-    if (!section.stitchCount || !section.repeatRows) {
-      return total
-    }
-    // Calculate total rows completed for the section
-    const completedRepeatRows = section.repeatCount * section.repeatRows
-    const currentRepeatRows = section.currentRow
-    const sectionTotalRows = completedRepeatRows + currentRepeatRows
-
-    // Add to project total
-    return total + sectionTotalRows * section.stitchCount
-  }, 0)
+  const totalStitches = calculateProjectStitches(project)
 
   return (
     <CounterCard

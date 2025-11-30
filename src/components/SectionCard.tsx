@@ -35,10 +35,16 @@ const SectionCard = ({ section, displaySize = 'large' }: sectionCardProps) => {
   const nextPatternRow = () => {
     if (!section?.pattern?.length || !section.repeatRows) return null
 
-    const nextRowIndex = (section.currentRow > 0 ? section.currentRow - 1 : 0) % section.repeatRows
+    const nextRowIndex = section.currentRow < section.repeatRows ? section.currentRow : 0
     const patternRow = section.pattern[nextRowIndex]
+    const stitchesText = patternRow.stitches ? ` (${patternRow.stitches})` : ''
 
-    return patternRow ? <Typography variant="body2">{patternRow}</Typography> : null
+    return patternRow ? (
+      <Typography variant="body2">
+        {patternRow.instruction}
+        {stitchesText}
+      </Typography>
+    ) : null
   }
 
   return (

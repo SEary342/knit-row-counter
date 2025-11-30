@@ -1,3 +1,8 @@
+export interface PatternRowConfig {
+  instruction: string
+  stitches: number | null
+}
+
 export interface SectionConfig {
   id: string
   name: string
@@ -6,7 +11,7 @@ export interface SectionConfig {
   repeatCount: number // how many times section reset completed
   linked?: boolean
   totalRepeats: number | null
-  pattern: string[]
+  pattern: PatternRowConfig[]
   stitchCount: number | null
 }
 

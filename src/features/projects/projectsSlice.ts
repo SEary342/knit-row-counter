@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { v4 } from 'uuid'
-
+import { produce } from 'immer'
 import { loadProjectsFromStorage } from '../../utils/localStorage'
 
 import type { Project, ProjectsState, SectionConfig } from './types'
@@ -13,6 +13,33 @@ const initialState: ProjectsState = loadProjectsFromStorage() ?? {
 const findProject = (state: ProjectsState) =>
   state.projects.find((p) => p.id === state.currentProjectId)
 
+export const calculateProjectStitches = (project: Project): number => {
+  return project.sections.reduce((total: number, section: SectionConfig) => {
+    const repeatRows = section.repeatRows
+    if (!repeatRows) {
+      // Handles null and 0
+      return total
+    }
+    // Calculate total rows completed for the section
+    const completedRepeatRows = section.repeatCount * repeatRows
+    const currentRepeatRows = section.currentRow
+    const sectionTotalRows = completedRepeatRows + currentRepeatRows
+
+    // Calculate stitches for the section
+    const sectionStitches = Array.from({ length: sectionTotalRows }).reduce(
+      (sectionTotal: number, _, i: number) => {
+        const rowIndex = i % repeatRows
+        const rowStitches = section.pattern[rowIndex]?.stitches ?? section.stitchCount ?? 0
+        return sectionTotal + rowStitches
+      },
+      0,
+    )
+
+    // Add to project total
+    return total + sectionStitches
+  }, 0)
+}
+
 export const projectsSlice = createSlice({
   name: 'projects',
   initialState,
@@ -23,19 +50,7 @@ export const projectsSlice = createSlice({
         name: action.payload.name,
         totalRows: null,
         currentRow: 0,
-        sections: [
-          {
-            id: v4(),
-            name: 'Section 1',
-            repeatRows: null,
-            currentRow: 0,
-            repeatCount: 0,
-            linked: true,
-            totalRepeats: null,
-            pattern: [],
-            stitchCount: null,
-          },
-        ],
+        sections: [],
         notes: '',
         lastModified: Date.now(),
       }
@@ -78,7 +93,7 @@ export const projectsSlice = createSlice({
       const section: SectionConfig = {
         id: v4(),
         name: action.payload.section.name ?? '',
-        repeatRows: action.payload.section.repeatRows ?? 0,
+        repeatRows: action.payload.section.repeatRows ?? null,
         totalRepeats: action.payload.section.totalRepeats ?? null,
         pattern: action.payload.section.pattern ?? [],
         stitchCount: action.payload.section.stitchCount ?? null,
@@ -101,7 +116,12 @@ export const projectsSlice = createSlice({
       if (!section) return
 
       Object.assign(section, action.payload.updates)
-      project.lastModified = Date.now()
+      // Ensure pattern is in the correct format
+      section.pattern = produce(section.pattern, (draft) => {
+        draft.forEach(
+          (row, i) => (draft[i] = { instruction: row.instruction, stitches: row.stitches ?? null }),
+        )
+      })
     },
 
     deleteSection: (state, action: PayloadAction<string>) => {
@@ -216,6 +236,9 @@ export const projectsSlice = createSlice({
     },
 
     importProjects: (state, action: PayloadAction<Project[]>) => {
+      // Basic validation to ensure we have an array
+      if (!Array.isArray(action.payload)) return
+
       for (const imported of action.payload) {
         const idx = state.projects.findIndex((p) => p.id === imported.id)
         if (idx !== -1) {

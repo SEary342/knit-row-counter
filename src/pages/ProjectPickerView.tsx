@@ -20,6 +20,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
+import ConfirmationDialog from '../components/ConfirmationDialog'
+import type { Project } from '../features/projects/types'
 
 export default function ProjectPickerView() {
   const dispatch = useAppDispatch()
@@ -27,7 +29,20 @@ export default function ProjectPickerView() {
   const projects = useAppSelector((s) => s.projects.projects)
   const currentId = useAppSelector((s) => s.projects.currentProjectId)
   const [openNew, setOpenNew] = React.useState(false)
+  const [confirmOpen, setConfirmOpen] = React.useState(false)
+  const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null)
   const [name, setName] = React.useState('')
+
+  const handleOpenConfirm = (project: Project) => {
+    setProjectToDelete(project)
+    setConfirmOpen(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (projectToDelete) dispatch(deleteProject(projectToDelete.id))
+    setConfirmOpen(false)
+    setProjectToDelete(null)
+  }
 
   const handleCreate = () => {
     if (!name.trim()) return
@@ -47,11 +62,6 @@ export default function ProjectPickerView() {
     navigate(`/project/${id}`)
   }
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Delete this project?')) return
-    dispatch(deleteProject(id))
-  }
-
   return (
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
@@ -69,7 +79,7 @@ export default function ProjectPickerView() {
           <ListItem
             key={p.id}
             secondaryAction={
-              <IconButton edge="end" onClick={() => handleDelete(p.id)} aria-label="delete">
+              <IconButton edge="end" onClick={() => handleOpenConfirm(p)} aria-label="delete">
                 <DeleteIcon />
               </IconButton>
             }
@@ -100,11 +110,19 @@ export default function ProjectPickerView() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ConfirmationDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Project?"
+        message={`Are you sure you want to delete the "${projectToDelete?.name ?? ''}" project? This action cannot be undone.`}
+        confirmText="Delete"
+        confirmColor="error"
+      />
     </Box>
   )
 }
-
-import type { Project } from '../features/projects/types'
 
 const getSecondaryText = (project: Project) => {
   const calculatedTotalRows = project.sections.reduce((total, section) => {
