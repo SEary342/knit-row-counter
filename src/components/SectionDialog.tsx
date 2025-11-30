@@ -190,13 +190,11 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
           </DialogContent>
 
           <DialogActions>
-            <Box display="flex" flex={1} justifyContent="space-between">
-              {section ? (
+            <Box display="flex" flex={1} justifyContent="space-between" sx={{ px: 2 }}>
+              {section && (
                 <Button onClick={() => setConfirmOpen(true)} color="error">
                   Delete
                 </Button>
-              ) : (
-                <div />
               )}
               <Button onClick={onClose}>Cancel</Button>
               <Button type="submit">Save</Button>

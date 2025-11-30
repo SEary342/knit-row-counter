@@ -8,12 +8,7 @@ import {
   ListItemText,
   IconButton,
   Button,
-  TextField,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   ListItemButton,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -22,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
 import ConfirmationDialog from '../components/ConfirmationDialog'
 import type { Project } from '../features/projects/types'
+import NewProjectDialog from './NewProjectDialog'
 
 export default function ProjectPickerView() {
   const dispatch = useAppDispatch()
@@ -31,7 +27,6 @@ export default function ProjectPickerView() {
   const [openNew, setOpenNew] = React.useState(false)
   const [confirmOpen, setConfirmOpen] = React.useState(false)
   const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null)
-  const [name, setName] = React.useState('')
 
   const handleOpenConfirm = (project: Project) => {
     setProjectToDelete(project)
@@ -44,10 +39,8 @@ export default function ProjectPickerView() {
     setProjectToDelete(null)
   }
 
-  const handleCreate = () => {
-    if (!name.trim()) return
-    dispatch(createProject({ name: name.trim() }))
-    setName('')
+  const handleCreate = (name: string) => {
+    dispatch(createProject({ name }))
     setOpenNew(false)
 
     // Navigate to last project after a tiny delay (works for skeleton)
@@ -91,25 +84,7 @@ export default function ProjectPickerView() {
         ))}
       </List>
 
-      <Dialog open={openNew} onClose={() => setOpenNew(false)}>
-        <DialogTitle>New Project</DialogTitle>
-        <DialogContent>
-          <TextField
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            label="Project name"
-            fullWidth
-            autoFocus
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenNew(false)}>Cancel</Button>
-          <Button onClick={handleCreate} variant="contained">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <NewProjectDialog open={openNew} onClose={() => setOpenNew(false)} onCreate={handleCreate} />
 
       <ConfirmationDialog
         open={confirmOpen}
