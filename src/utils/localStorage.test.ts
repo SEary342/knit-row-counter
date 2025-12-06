@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-import { loadProjectsFromStorage, saveProjectsToStorage } from './localStorage'
-import type { ProjectsState } from '../features/projects/types'
+import { loadStateFromStorage, saveStateToStorage } from './localStorage'
+import type { RootState } from '../app/store'
 
-const STORAGE_KEY = 'knit_projects_v1'
+const getStorageKey = (slice: keyof RootState) => `knit_slice_${slice}`
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -32,7 +32,7 @@ describe('localStorage utils', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {}) // silence console errors for the failing test
   })
 
-  const mockState: ProjectsState = {
+  const mockProjectsState: RootState['projects'] = {
     projects: [
       {
         id: '1',
@@ -58,31 +58,31 @@ describe('localStorage utils', () => {
     currentProjectId: '1',
   }
 
-  describe('saveProjectsToStorage', () => {
+  describe('saveStateToStorage', () => {
     it('should save the state to localStorage', () => {
-      saveProjectsToStorage(mockState)
-      const rawData = localStorage.getItem(STORAGE_KEY)
+      saveStateToStorage('projects', mockProjectsState)
+      const rawData = localStorage.getItem(getStorageKey('projects'))
       expect(rawData).not.toBeNull()
-      expect(JSON.parse(rawData!)).toEqual(mockState)
+      expect(JSON.parse(rawData!)).toEqual(mockProjectsState)
     })
   })
 
-  describe('loadProjectsFromStorage', () => {
-    it('should return null if no data is in localStorage', () => {
-      const result = loadProjectsFromStorage()
-      expect(result).toBeNull()
+  describe('loadStateFromStorage', () => {
+    it('should return undefined if no data is in localStorage', () => {
+      const result = loadStateFromStorage('projects')
+      expect(result).toBeUndefined()
     })
 
     it('should return the parsed state if data is in localStorage', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(mockState))
-      const result = loadProjectsFromStorage()
-      expect(result).toEqual(mockState)
+      localStorage.setItem(getStorageKey('projects'), JSON.stringify(mockProjectsState))
+      const result = loadStateFromStorage('projects')
+      expect(result).toEqual(mockProjectsState)
     })
 
-    it('should return null if data in localStorage is invalid JSON', () => {
-      localStorage.setItem(STORAGE_KEY, 'invalid json')
-      const result = loadProjectsFromStorage()
-      expect(result).toBeNull()
+    it('should return undefined if data in localStorage is invalid JSON', () => {
+      localStorage.setItem(getStorageKey('projects'), 'invalid json')
+      const result = loadStateFromStorage('projects')
+      expect(result).toBeUndefined()
     })
   })
 
@@ -105,8 +105,8 @@ describe('localStorage utils', () => {
         currentProjectId: 'p1',
       }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(oldState))
-      const result = loadProjectsFromStorage()
+      localStorage.setItem(getStorageKey('projects'), JSON.stringify(oldState))
+      const result = loadStateFromStorage('projects')
 
       expect(result).not.toBeNull()
       const migratedPattern = result!.projects[0].sections[0].pattern
@@ -137,8 +137,8 @@ describe('localStorage utils', () => {
         currentProjectId: 'p1',
       }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState))
-      const result = loadProjectsFromStorage()
+      localStorage.setItem(getStorageKey('projects'), JSON.stringify(newState))
+      const result = loadStateFromStorage('projects')
 
       expect(result).toEqual(newState)
     })

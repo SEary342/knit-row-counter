@@ -1,18 +1,17 @@
-import type { Middleware } from '@reduxjs/toolkit'
+import { type Middleware } from '@reduxjs/toolkit'
+import { type RootState } from './store'
 
-import { saveProjectsToStorage } from '../utils/localStorage'
+import { saveStateToStorage } from '../utils/localStorage'
 
-export const persistenceMiddleware: Middleware = (storeAPI) => (next) => (action) => {
+const PERSISTED_SLICES: (keyof RootState)[] = ['projects', 'progress', 'ui']
+
+export const persistenceMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action)
-  const state = storeAPI.getState()
+  const state = store.getState()
 
-  // Persist only project data (localStorage)
-  if (state.projects) {
-    saveProjectsToStorage(state.projects)
-  }
-
-  // Stub for future backend save
-  // saveToServer(state.projects);
+  PERSISTED_SLICES.forEach((slice) => {
+    saveStateToStorage(slice, state[slice])
+  })
 
   return result
 }

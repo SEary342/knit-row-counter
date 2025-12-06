@@ -1,11 +1,10 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { v4 } from 'uuid'
 import { produce } from 'immer'
-import { loadProjectsFromStorage } from '../../utils/localStorage'
 
 import type { Project, ProjectsState, SectionConfig } from './types'
 
-const initialState: ProjectsState = loadProjectsFromStorage() ?? {
+const initialState: ProjectsState = {
   projects: [],
   currentProjectId: null,
 }
@@ -160,6 +159,7 @@ export const projectsSlice = createSlice({
       if (!project) return
 
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
+
       const incrementLogic = (section: SectionConfig) => {
         section.currentRow += 1
         if (section.repeatRows) {
