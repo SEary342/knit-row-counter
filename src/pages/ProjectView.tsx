@@ -9,6 +9,7 @@ import {
   TextField,
   Button,
   Grid,
+  Alert,
   Tooltip,
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -27,6 +28,42 @@ import {
 import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
+import { type ProgressRecord } from '../features/progress/progressSlice'
+
+const getTodayStats = (projectId: string, records: ProgressRecord[]) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const midnight = today.getTime()
+
+  const projectRecordsToday = records.filter(
+    (r) => r.projectId === projectId && r.timestamp >= midnight,
+  )
+
+  const rowsToday = projectRecordsToday.reduce((sum, r) => sum + r.rowsDelta, 0)
+  const stitchesToday = projectRecordsToday.reduce((sum, r) => sum + r.stitchesDelta, 0)
+
+  // last 10 row increments for speed calculation
+  const lastTenRowRecords = records
+    .filter((r) => r.projectId === projectId && r.rowsDelta > 0)
+    .slice(-10)
+
+  let rowsPerHour = 0
+  let stitchesPerHour = 0
+  if (lastTenRowRecords.length > 1) {
+    const timeSpanHours =
+      (lastTenRowRecords[lastTenRowRecords.length - 1].timestamp - lastTenRowRecords[0].timestamp) /
+      (1000 * 60 * 60)
+    if (timeSpanHours > 0) {
+      const totalRows = lastTenRowRecords.reduce((sum, r) => sum + r.rowsDelta, 0)
+      const totalStitches = lastTenRowRecords.reduce((sum, r) => sum + r.stitchesDelta, 0)
+      // We subtract the first delta because the timespan starts *after* it occurred.
+      rowsPerHour = (totalRows - lastTenRowRecords[0].rowsDelta) / timeSpanHours
+      stitchesPerHour = (totalStitches - lastTenRowRecords[0].stitchesDelta) / timeSpanHours
+    }
+  }
+
+  return { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour }
+}
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
@@ -34,6 +71,7 @@ const ProjectView = () => {
   const dispatch = useAppDispatch()
   const { enqueueSnackbar } = useSnackbar()
   const project = useAppSelector((s) => s.projects.projects.find((p) => p.id === id))
+  const progressRecords = useAppSelector((s) => s.progress.records)
 
   const [addSectionOpen, setAddSectionOpen] = React.useState(false)
   const importInputRef = React.useRef<HTMLInputElement>(null)
@@ -45,6 +83,13 @@ const ProjectView = () => {
   }, [project, navigate])
 
   if (!project) return null
+
+  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour } = getTodayStats(
+    project.id,
+    progressRecords,
+  )
+
+  const hasProgress = rowsToday > 0 || stitchesToday > 0
 
   // Check if any section is linked to force a visual-only sort
   const isSortForced = project.sections.some((s) => s.linked)
@@ -112,6 +157,18 @@ const ProjectView = () => {
           Section
         </Button>
       </Stack>
+
+      {hasProgress && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="subtitle2">Today's Progress</Typography>
+          <Typography variant="body2" component="div">
+            - Rows: {rowsToday} | Stitches: {stitchesToday}
+          </Typography>
+          <Typography variant="body2" component="div">
+            - Speed: {rowsPerHour.toFixed(1)} rows/hr | {stitchesPerHour.toFixed(1)} stitches/hr
+          </Typography>
+        </Alert>
+      )}
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
