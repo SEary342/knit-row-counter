@@ -133,6 +133,27 @@ export const projectsSlice = createSlice({
       project.lastModified = Date.now()
     },
 
+    moveSection: (
+      state,
+      action: PayloadAction<{ sectionId: string; direction: 'up' | 'down' }>,
+    ) => {
+      const project = findProject(state)
+      if (!project) return
+
+      const { sectionId, direction } = action.payload
+      const sectionIndex = project.sections.findIndex((s) => s.id === sectionId)
+
+      if (sectionIndex === -1) return
+
+      const newIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1
+
+      if (newIndex < 0 || newIndex >= project.sections.length) return
+
+      const [movedSection] = project.sections.splice(sectionIndex, 1)
+      project.sections.splice(newIndex, 0, movedSection)
+      project.lastModified = Date.now()
+    },
+
     incrementRow: (state, action: PayloadAction<string | undefined>) => {
       const sectionId = action.payload
       const project = findProject(state)
@@ -235,16 +256,15 @@ export const projectsSlice = createSlice({
       if (project) project.patternUrl = action.payload
     },
 
-    importProjects: (state, action: PayloadAction<Project[]>) => {
-      // Basic validation to ensure we have an array
-      if (!Array.isArray(action.payload)) return
+    importProjects: (state, action: PayloadAction<Project | Project[]>) => {
+      const projectsToImport = Array.isArray(action.payload) ? action.payload : [action.payload]
 
-      for (const imported of action.payload) {
+      for (const imported of projectsToImport) {
         const idx = state.projects.findIndex((p) => p.id === imported.id)
         if (idx !== -1) {
           // Replace existing project
           state.projects[idx] = imported
-        } else {
+        } else if (imported.id && imported.name) {
           state.projects.push(imported)
         }
       }
@@ -268,6 +288,7 @@ export const {
   resetProjectProgress,
   addSection,
   deleteSection,
+  moveSection,
 } = projectsSlice.actions
 
 export default projectsSlice.reducer

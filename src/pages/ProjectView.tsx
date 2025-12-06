@@ -46,6 +46,17 @@ const ProjectView = () => {
 
   if (!project) return null
 
+  // Check if any section is linked to force a visual-only sort
+  const isSortForced = project.sections.some((s) => s.linked)
+
+  // Create a new array for display, sorting linked sections to the front
+  const displayedSections = isSortForced
+    ? [...project.sections].sort((a, b) => {
+        if (a.linked && !b.linked) return -1
+        if (!a.linked && b.linked) return 1
+        return 0 // Maintain original order for items of same linked status
+      })
+    : project.sections
   const handleExport = () => {
     const safeName = project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
     const dataStr = JSON.stringify(project, null, 2)
@@ -76,8 +87,7 @@ const ProjectView = () => {
           return
         }
 
-        // The importProjects reducer expects an array of projects
-        dispatch(importProjects([imported]))
+        dispatch(importProjects(imported))
         enqueueSnackbar(`Project "${imported.name}" has been imported.`, { variant: 'success' })
       } catch (error) {
         console.error('Failed to parse import file:', error)
@@ -107,7 +117,7 @@ const ProjectView = () => {
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <GlobalCard project={project} displaySize="large" />
         </Grid>
-        {project.sections.map((section) => (
+        {displayedSections.map((section) => (
           <Grid
             key={section.id}
             size={{
@@ -116,7 +126,7 @@ const ProjectView = () => {
               md: 3,
             }}
           >
-            <SectionCard section={section} displaySize="small" />
+            <SectionCard section={section} displaySize="small" isSortForced={isSortForced} />
           </Grid>
         ))}
       </Grid>

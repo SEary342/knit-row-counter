@@ -1,7 +1,7 @@
 {
   "name": "knit-row-counter",
   "private": true,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -16,15 +16,15 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.5",
-    "@mui/material": "^7.3.5",
-    "@mui/x-data-grid": "^8.20.0",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@mui/x-data-grid": "^8.21.0",
     "@reduxjs/toolkit": "^2.11.0",
     "notistack": "^3.0.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.9.6",
+    "react-router-dom": "^7.10.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -35,10 +35,10 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
-    "@typescript-eslint/parser": "^8.48.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "^4.0.14",
+    "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -48,13 +48,13 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "jsdom": "^27.2.0",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.2.8",
+    "vite": "npm:rolldown-vite@7.2.10",
     "vite-plugin-singlefile": "^2.3.0",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   },
   "overrides": {
-    "vite": "npm:rolldown-vite@7.2.8"
+    "vite": "npm:rolldown-vite@7.2.10"
   }
 }

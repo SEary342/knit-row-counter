@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Box,
@@ -17,16 +17,34 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
 import ConfirmationDialog from '../components/ConfirmationDialog'
 import type { Project } from '../features/projects/types'
-import NewProjectDialog from './NewProjectDialog'
+import NewProjectDialog from '../components/NewProjectDialog'
+
+const getSecondaryText = (project: Project) => {
+  const calculatedTotalRows = project.sections.reduce((total, section) => {
+    if (section.totalRepeats && section.repeatRows) {
+      return total + section.totalRepeats * section.repeatRows
+    }
+    return total
+  }, 0)
+
+  const maxRows = project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)
+
+  if (maxRows && maxRows > 0) {
+    const percent = Math.min(100, Math.round((project.currentRow / maxRows) * 100))
+    return `${percent}% complete (${project.currentRow.toLocaleString()} / ${maxRows.toLocaleString()} rows)`
+  }
+
+  return `Current row: ${project.currentRow.toLocaleString()}`
+}
 
 export default function ProjectPickerView() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const projects = useAppSelector((s) => s.projects.projects)
   const currentId = useAppSelector((s) => s.projects.currentProjectId)
-  const [openNew, setOpenNew] = React.useState(false)
-  const [confirmOpen, setConfirmOpen] = React.useState(false)
-  const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null)
+  const [openNew, setOpenNew] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null)
 
   const handleOpenConfirm = (project: Project) => {
     setProjectToDelete(project)
@@ -97,22 +115,4 @@ export default function ProjectPickerView() {
       />
     </Box>
   )
-}
-
-const getSecondaryText = (project: Project) => {
-  const calculatedTotalRows = project.sections.reduce((total, section) => {
-    if (section.totalRepeats && section.repeatRows) {
-      return total + section.totalRepeats * section.repeatRows
-    }
-    return total
-  }, 0)
-
-  const maxRows = project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)
-
-  if (maxRows && maxRows > 0) {
-    const percent = Math.min(100, Math.round((project.currentRow / maxRows) * 100))
-    return `${percent}% complete (${project.currentRow.toLocaleString()} / ${maxRows.toLocaleString()} rows)`
-  }
-
-  return `Current row: ${project.currentRow.toLocaleString()}`
 }
