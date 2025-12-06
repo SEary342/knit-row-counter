@@ -133,6 +133,27 @@ export const projectsSlice = createSlice({
       project.lastModified = Date.now()
     },
 
+    moveSection: (
+      state,
+      action: PayloadAction<{ sectionId: string; direction: 'up' | 'down' }>,
+    ) => {
+      const project = findProject(state)
+      if (!project) return
+
+      const { sectionId, direction } = action.payload
+      const sectionIndex = project.sections.findIndex((s) => s.id === sectionId)
+
+      if (sectionIndex === -1) return
+
+      const newIndex = direction === 'up' ? sectionIndex - 1 : sectionIndex + 1
+
+      if (newIndex < 0 || newIndex >= project.sections.length) return
+
+      const [movedSection] = project.sections.splice(sectionIndex, 1)
+      project.sections.splice(newIndex, 0, movedSection)
+      project.lastModified = Date.now()
+    },
+
     incrementRow: (state, action: PayloadAction<string | undefined>) => {
       const sectionId = action.payload
       const project = findProject(state)
@@ -267,6 +288,7 @@ export const {
   resetProjectProgress,
   addSection,
   deleteSection,
+  moveSection,
 } = projectsSlice.actions
 
 export default projectsSlice.reducer
