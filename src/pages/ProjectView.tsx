@@ -76,8 +76,7 @@ const ProjectView = () => {
           return
         }
 
-        // The importProjects reducer expects an array of projects
-        dispatch(importProjects([imported]))
+        dispatch(importProjects(imported))
         enqueueSnackbar(`Project "${imported.name}" has been imported.`, { variant: 'success' })
       } catch (error) {
         console.error('Failed to parse import file:', error)
