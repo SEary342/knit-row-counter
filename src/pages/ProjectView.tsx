@@ -28,42 +28,7 @@ import {
 import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
-import { type ProgressRecord } from '../features/progress/progressSlice'
-
-const getTodayStats = (projectId: string, records: ProgressRecord[]) => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const midnight = today.getTime()
-
-  const projectRecordsToday = records.filter(
-    (r) => r.projectId === projectId && r.timestamp >= midnight,
-  )
-
-  const rowsToday = projectRecordsToday.reduce((sum, r) => sum + r.rowsDelta, 0)
-  const stitchesToday = projectRecordsToday.reduce((sum, r) => sum + r.stitchesDelta, 0)
-
-  // last 10 row increments for speed calculation
-  const lastTenRowRecords = records
-    .filter((r) => r.projectId === projectId && r.rowsDelta > 0)
-    .slice(-10)
-
-  let rowsPerHour = 0
-  let stitchesPerHour = 0
-  if (lastTenRowRecords.length > 1) {
-    const timeSpanHours =
-      (lastTenRowRecords[lastTenRowRecords.length - 1].timestamp - lastTenRowRecords[0].timestamp) /
-      (1000 * 60 * 60)
-    if (timeSpanHours > 0) {
-      const totalRows = lastTenRowRecords.reduce((sum, r) => sum + r.rowsDelta, 0)
-      const totalStitches = lastTenRowRecords.reduce((sum, r) => sum + r.stitchesDelta, 0)
-      // We subtract the first delta because the timespan starts *after* it occurred.
-      rowsPerHour = (totalRows - lastTenRowRecords[0].rowsDelta) / timeSpanHours
-      stitchesPerHour = (totalStitches - lastTenRowRecords[0].stitchesDelta) / timeSpanHours
-    }
-  }
-
-  return { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour }
-}
+import { getTodayStats } from '../utils/stats'
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
@@ -162,10 +127,12 @@ const ProjectView = () => {
         <Alert severity="info" sx={{ mb: 2 }}>
           <Typography variant="subtitle2">Today's Progress</Typography>
           <Typography variant="body2" component="div">
-            - Rows: {rowsToday} | Stitches: {stitchesToday}
+            - Rows: {rowsToday}
+            {stitchesToday !== 0 && ` | Stitches: ${stitchesToday}`}
           </Typography>
           <Typography variant="body2" component="div">
-            - Speed: {rowsPerHour.toFixed(1)} rows/hr | {stitchesPerHour.toFixed(1)} stitches/hr
+            - Speed: {rowsPerHour.toFixed(1)} rows/hr
+            {stitchesPerHour !== 0 && ` | ${stitchesPerHour.toFixed(1)} stitches/hr`}
           </Typography>
         </Alert>
       )}
