@@ -15,12 +15,14 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home' // Projects
+import AutorenewIcon from '@mui/icons-material/Autorenew'
 import FileUploadIcon from '@mui/icons-material/FileUpload' // Import
 import FileDownloadIcon from '@mui/icons-material/FileDownload' // Export
 import { Link as RouterLink } from 'react-router-dom'
 import { SnackbarProvider, useSnackbar } from 'notistack'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { importProjects } from '../features/projects/projectsSlice'
+import { recalculateStitchDeltas } from '../features/progress/progressSlice'
 import LogoIcon from './LogoIcon'
 import { LOGO_SVG_URL } from './logoData'
 
@@ -65,6 +67,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       }
     }
     reader.readAsText(file)
+    setOpen(false)
+  }
+
+  const handleRecalculateStats = () => {
+    dispatch(recalculateStitchDeltas({ projects }))
+    enqueueSnackbar('Project statistics have been recalculated.', { variant: 'info' })
     setOpen(false)
   }
 
@@ -138,6 +146,17 @@ function AppLayout({ children }: { children: React.ReactNode }) {
                     <FileDownloadIcon />
                   </ListItemIcon>
                   <ListItemText primary="Export" />
+                </ListItemButton>
+              </ListItem>
+            </List>
+            <Divider />
+            <List>
+              <ListItem disablePadding>
+                <ListItemButton onClick={handleRecalculateStats}>
+                  <ListItemIcon>
+                    <AutorenewIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Recalculate Stats" />
                 </ListItemButton>
               </ListItem>
             </List>

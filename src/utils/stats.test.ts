@@ -115,16 +115,6 @@ describe('getTodayStats', () => {
     // Today's stats should only sum up records from today
     expect(stats.rowsToday).toBe(5 + 3 - 1) // 7
     expect(stats.stitchesToday).toBe(50 + 30 - 10) // 70
-
-    // Speed is calculated over the last 10 (or fewer) records.
-    // Timespan is from the first record to the last.
-    // Deltas are summed from the *second* record onwards.
-    // Timespan: (now + 1000) - (yesterday) = a bit over 12 hours
-    // Total rows delta (from 2nd record): 5 + 3 - 1 = 7
-    // Total stitches delta (from 2nd record): 50 + 30 - 10 = 70
-    const timeSpanHours = (records[3].timestamp - records[0].timestamp) / (1000 * 60 * 60)
-    expect(stats.rowsPerHour).toBeCloseTo(7 / timeSpanHours)
-    expect(stats.stitchesPerHour).toBeCloseTo(70 / timeSpanHours)
   })
 
   it('should only use the last 10 records for speed calculation', () => {

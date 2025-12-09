@@ -14,7 +14,7 @@ export const getTodayStats = (projectId: string, records: ProgressRecord[]) => {
 
   // Use the last 10 records (increments and decrements) for speed calculation
   // to get a more accurate recent speed.
-  const recentRecords = records.filter((r) => r.projectId === projectId).slice(-10)
+  const recentRecords = projectRecordsToday.slice(-10)
 
   let rowsPerHour = 0
   let stitchesPerHour = 0

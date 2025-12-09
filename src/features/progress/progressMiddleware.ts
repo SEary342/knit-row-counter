@@ -24,6 +24,13 @@ export const progressMiddleware: Middleware = (store) => (next) => (action) => {
     (p) => p.id === beforeState.projects.currentProjectId,
   )
 
+  if (!beforeProject) {
+    return next(action)
+  }
+
+  // Calculate stitches BEFORE the state changes
+  const beforeStitches = calculateProjectStitches(beforeProject)
+
   // Let the original action proceed to update the state
   const result = next(action)
 
@@ -32,8 +39,7 @@ export const progressMiddleware: Middleware = (store) => (next) => (action) => {
     (p) => p.id === afterState.projects.currentProjectId,
   )
 
-  if (beforeProject && afterProject) {
-    const beforeStitches = calculateProjectStitches(beforeProject)
+  if (afterProject) {
     const afterStitches = calculateProjectStitches(afterProject)
     const stitchesDelta = afterStitches - beforeStitches
     const rowsDelta = action.type === 'projects/incrementRow' ? 1 : -1

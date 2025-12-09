@@ -34,6 +34,12 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
 
   const totalStitches = calculateProjectStitches(project)
 
+  const linkedSectionIds = project.sections
+    .filter((section) => section.linked)
+    .map((section) => section.id)
+    .join('|')
+  const payload = linkedSectionIds.length > 0 ? linkedSectionIds : undefined
+
   return (
     <CounterCard
       title="Global"
@@ -59,8 +65,8 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
     >
       <CounterCircle
         value={project.currentRow}
-        onIncrement={() => dispatch(incrementRow())}
-        onDecrement={() => dispatch(decrementRow())}
+        onIncrement={() => dispatch(incrementRow(payload))}
+        onDecrement={() => dispatch(decrementRow(payload))}
         max={project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)}
         size={circleSize}
         showFraction={false}
