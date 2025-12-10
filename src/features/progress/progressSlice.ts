@@ -1,10 +1,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { v4 as uuidv4 } from 'uuid'
 import { type Project, type SectionConfig } from '../projects/types'
 
 export interface ProgressRecord {
+  id: string
   projectId: string
   sectionId: string
-  timestamp: number // Using number (Date.now()) for easier calculations
+  timestamp: number
   rowsDelta: number
   stitchesDelta: number
 }
@@ -21,11 +23,15 @@ const progressSlice = createSlice({
   name: 'progress',
   initialState,
   reducers: {
-    addProgressRecord: (state, action: PayloadAction<Omit<ProgressRecord, 'timestamp'>>) => {
+    addProgressRecord: (state, action: PayloadAction<Omit<ProgressRecord, 'timestamp' | 'id'>>) => {
       state.records.push({
+        id: uuidv4(),
         ...action.payload,
         timestamp: Date.now(),
       })
+    },
+    deleteProgressRecord: (state, action: PayloadAction<string>) => {
+      state.records = state.records.filter((r) => r.id !== action.payload)
     },
     recalculateStitchDeltas: (state, action: PayloadAction<{ projects: Project[] }>) => {
       const projectsById = new Map(action.payload.projects.map((p) => [p.id, p]))
@@ -82,6 +88,7 @@ const progressSlice = createSlice({
   },
 })
 
-export const { addProgressRecord, recalculateStitchDeltas } = progressSlice.actions
+export const { addProgressRecord, recalculateStitchDeltas, deleteProgressRecord } =
+  progressSlice.actions
 
 export default progressSlice.reducer

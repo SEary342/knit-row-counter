@@ -142,5 +142,32 @@ describe('localStorage utils', () => {
 
       expect(result).toEqual(newState)
     })
+
+    it('should add IDs to progress records that are missing them', () => {
+      const oldProgressState = {
+        records: [
+          {
+            // no 'id' field
+            projectId: 'p1',
+            sectionId: 's1',
+            timestamp: 12345,
+            rowsDelta: 1,
+            stitchesDelta: 10,
+          },
+          {
+            id: 'existing-id', // has 'id' field
+            projectId: 'p1',
+            sectionId: 's2',
+            timestamp: 12346,
+            rowsDelta: 1,
+            stitchesDelta: 12,
+          },
+        ],
+      }
+      localStorage.setItem(getStorageKey('progress'), JSON.stringify(oldProgressState))
+      const result = loadStateFromStorage('progress')
+      expect(result?.records[0].id).toBeTypeOf('string')
+      expect(result?.records[1].id).toBe('existing-id')
+    })
   })
 })

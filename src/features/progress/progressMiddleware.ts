@@ -48,7 +48,7 @@ export const progressMiddleware: Middleware = (store) => (next) => (action) => {
     store.dispatch(
       addProgressRecord({
         projectId: beforeProject.id,
-        sectionId, // This is now guaranteed to be a string
+        sectionId,
         rowsDelta,
         stitchesDelta,
       }),
