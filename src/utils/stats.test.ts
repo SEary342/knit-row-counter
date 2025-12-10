@@ -32,6 +32,7 @@ describe('getTodayStats', () => {
   it('should return all zeros when records exist but not for the specified project', () => {
     const records: ProgressRecord[] = [
       {
+        id: 'rec-1',
         projectId: 'proj-2',
         sectionId: 's1',
         timestamp: MOCK_DATE_NOW.getTime(),
@@ -51,7 +52,14 @@ describe('getTodayStats', () => {
   it('should return zero for today stats if all records are from previous days', () => {
     const yesterday = MOCK_MIDNIGHT - 1000 * 60 * 60 * 24
     const records: ProgressRecord[] = [
-      { projectId, sectionId: 's1', timestamp: yesterday, rowsDelta: 5, stitchesDelta: 50 },
+      {
+        id: 'rec-1',
+        projectId,
+        sectionId: 's1',
+        timestamp: yesterday,
+        rowsDelta: 5,
+        stitchesDelta: 50,
+      },
     ]
     const stats = getTodayStats(projectId, records)
     expect(stats.rowsToday).toBe(0)
@@ -61,6 +69,7 @@ describe('getTodayStats', () => {
   it('should return zero for speed if there is only one record', () => {
     const records: ProgressRecord[] = [
       {
+        id: 'rec-1',
         projectId,
         sectionId: 's1',
         timestamp: MOCK_DATE_NOW.getTime(),
@@ -80,6 +89,7 @@ describe('getTodayStats', () => {
       // Yesterday's record - should be ignored for "today" stats
       {
         projectId,
+        id: 'rec-1',
         sectionId: 's1',
         timestamp: MOCK_MIDNIGHT - 1000,
         rowsDelta: 10,
@@ -88,6 +98,7 @@ describe('getTodayStats', () => {
       // Today's records
       {
         projectId,
+        id: 'rec-2',
         sectionId: 's1',
         timestamp: MOCK_DATE_NOW.getTime() - 1000 * 60 * 60, // 1 hour ago
         rowsDelta: 5,
@@ -96,6 +107,7 @@ describe('getTodayStats', () => {
       {
         projectId,
         sectionId: 's1',
+        id: 'rec-3',
         timestamp: MOCK_DATE_NOW.getTime(), // now
         rowsDelta: 3,
         stitchesDelta: 30,
@@ -103,6 +115,7 @@ describe('getTodayStats', () => {
       // A decrement
       {
         projectId,
+        id: 'rec-4',
         sectionId: 's1',
         timestamp: MOCK_DATE_NOW.getTime() + 1000, // a bit later
         rowsDelta: -1,
@@ -122,6 +135,7 @@ describe('getTodayStats', () => {
     // Create 12 records, 1 minute apart
     for (let i = 0; i < 12; i++) {
       records.push({
+        id: `rec-${i}`, // Add a unique ID for each record
         projectId,
         sectionId: 's1',
         timestamp: MOCK_DATE_NOW.getTime() - (11 - i) * 60 * 1000,
