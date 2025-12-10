@@ -162,13 +162,9 @@ export const projectsSlice = createSlice({
 
       const incrementLogic = (section: SectionConfig) => {
         section.currentRow += 1
-        if (section.repeatRows) {
-          if (section.currentRow === section.repeatRows) {
-            section.repeatCount += 1
-          }
-          if (section.currentRow > section.repeatRows) {
-            section.currentRow = 1
-          }
+        if (section.repeatRows && section.currentRow > section.repeatRows) {
+          section.currentRow = 1
+          section.repeatCount += 1
         }
       }
 
@@ -198,17 +194,12 @@ export const projectsSlice = createSlice({
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
 
       const decrementLogic = (section: SectionConfig) => {
-        if (section.repeatRows) {
-          if (section.currentRow === section.repeatRows && section.repeatCount > 0) {
-            section.currentRow--
-            section.repeatCount--
-          } else if (section.currentRow === 1) {
-            section.currentRow = section.repeatRows
-          } else {
-            section.currentRow--
-          }
-        } else if (section.currentRow > 0) {
+        if (section.currentRow > 0) {
           section.currentRow--
+          if (section.repeatRows && section.currentRow === 0 && section.repeatCount > 0) {
+            section.currentRow = section.repeatRows
+            section.repeatCount--
+          }
         }
       }
 

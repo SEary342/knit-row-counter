@@ -41,11 +41,15 @@ const SectionCard = ({
 
   const repeatsNote = () => {
     if (!section) return 'No section configured'
-    if (section.repeatRows && section.repeatRows > 1) {
+    if (section.repeatRows && section.repeatRows > 0) {
+      // Soft-increment to show completion of a repeat without altering state
+      const displayRepeatCount =
+        section.currentRow === section.repeatRows ? section.repeatCount + 1 : section.repeatCount
+
       if (section.totalRepeats && section.totalRepeats > 0) {
-        return `Repeats: ${section.repeatCount} / ${section.totalRepeats}`
+        return `Repeats: ${displayRepeatCount} / ${section.totalRepeats}`
       }
-      return `Repeats: ${section.repeatCount}`
+      return `Repeats: ${displayRepeatCount}`
     }
     return undefined
   }
