@@ -12,6 +12,7 @@ import {
   Alert,
   Tooltip,
 } from '@mui/material'
+import InfoIcon from '@mui/icons-material/Info'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
@@ -28,6 +29,7 @@ import {
 import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
+import ProjectInfoDialog from '../components/ProjectInfoDialog'
 import { getTodayStats } from '../utils/stats'
 
 const ProjectView = () => {
@@ -39,6 +41,7 @@ const ProjectView = () => {
   const progressRecords = useAppSelector((s) => s.progress.records)
 
   const [addSectionOpen, setAddSectionOpen] = React.useState(false)
+  const [infoDialogOpen, setInfoDialogOpen] = React.useState(false)
   const importInputRef = React.useRef<HTMLInputElement>(null)
   React.useEffect(() => {
     if (!project) {
@@ -177,6 +180,11 @@ const ProjectView = () => {
                 <FileDownloadIcon />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Project History & Info">
+              <IconButton onClick={() => setInfoDialogOpen(true)}>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
             <input
               type="file"
               ref={importInputRef}
@@ -207,6 +215,11 @@ const ProjectView = () => {
       </Paper>
 
       <SectionDialog open={addSectionOpen} onClose={() => setAddSectionOpen(false)} />
+      <ProjectInfoDialog
+        project={project}
+        open={infoDialogOpen}
+        onClose={() => setInfoDialogOpen(false)}
+      />
     </Box>
   )
 }
