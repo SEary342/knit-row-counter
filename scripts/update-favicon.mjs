@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const rootDir = path.resolve(__dirname, '..', '..') // Go up two levels from src/components
+const rootDir = path.resolve(__dirname, '..') // Go up one level from scripts
 
 const logoDataPath = path.join(rootDir, 'src', 'components', 'logoData.ts')
 const indexPath = path.join(rootDir, 'index.html') // Correctly locate index.html at the root
