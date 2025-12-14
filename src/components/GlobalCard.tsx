@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { IconButton, Tooltip } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 import type { Project } from '../features/projects/types'
 import {
   calculateProjectStitches,
+  calculateProjectTotalRows,
   decrementRow,
   incrementRow,
 } from '../features/projects/projectsSlice'
@@ -25,12 +26,7 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const circleSize = displaySize === 'small' ? 140 : displaySize === 'medium' ? 180 : 220
 
-  const calculatedTotalRows = project.sections.reduce((total, section) => {
-    if (section.totalRepeats && section.repeatRows) {
-      return total + section.totalRepeats * section.repeatRows
-    }
-    return total
-  }, 0)
+  const calculatedTotalRows = useMemo(() => calculateProjectTotalRows(project), [project])
 
   const totalStitches = calculateProjectStitches(project)
 
