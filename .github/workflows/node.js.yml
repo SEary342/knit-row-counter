@@ -22,7 +22,8 @@ jobs:
         node-version: [22.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -30,5 +31,33 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - run: npm ci
-      - run: npm test
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Add coverage summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Coverage" >> $GITHUB_STEP_SUMMARY
+          node -e "
+            const fs = require('fs');
+            const summary = JSON.parse(
+              fs.readFileSync('coverage/coverage-summary.json', 'utf8')
+            ).total;
+
+            console.log(
+              `- **Lines:** ${summary.lines.pct}%\n` +
+              `- **Statements:** ${summary.statements.pct}%\n` +
+              `- **Functions:** ${summary.functions.pct}%\n` +
+              `- **Branches:** ${summary.branches.pct}%`
+            );
+          " >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
