@@ -70,41 +70,25 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
   const [countMode, setCountMode] = useState<CountMode>('rows')
   const [maxDays, setMaxDays] = useState(365)
 
+  const updateMaxDays = () => {
+    if (!containerRef.current) return
+    setMaxDays(calculateMaxDays(containerRef.current.offsetWidth, isMobile))
+  }
+
   useEffect(() => {
     const element = containerRef.current
-    let observer: ResizeObserver | null = null
-    let timeoutId: number | undefined
+    if (!element) return
 
-    if (!open) {
-      setMaxDays(isMobile ? 90 : 365)
-      return
-    }
-
-    if (element) {
-      observer = new ResizeObserver((entries) => {
+    const observer = new ResizeObserver((entries) => {
         if (entries[0]) {
           setMaxDays(calculateMaxDays(entries[0].contentRect.width, isMobile))
         }
       })
+
       observer.observe(element)
 
-      timeoutId = setTimeout(() => {
-        if (containerRef.current) {
-          setMaxDays(calculateMaxDays(containerRef.current.offsetWidth, isMobile))
-        }
-      }, 50)
-    } else {
-      return
-    }
-
-    // Cleanup
-    return () => {
-      if (observer) {
-        observer.unobserve(element!)
-      }
-      clearTimeout(timeoutId)
-    }
-  }, [open, isMobile])
+    return () => observer.disconnect()
+  }, [isMobile])
 
   const projectRecords = useMemo(
     () => records.filter((r) => r.projectId === project.id),
@@ -182,7 +166,14 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth fullScreen={isMobile}>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="md"
+        fullWidth
+        fullScreen={isMobile}
+        slotProps={{ transition: { onEntered: updateMaxDays } }}
+      >
         <DialogTitle
           sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
