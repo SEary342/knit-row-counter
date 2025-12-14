@@ -6,7 +6,13 @@ export interface HeatmapData {
   count: number
 }
 
-const formatDate = (date: Date): string => date.toISOString().split('T')[0]
+export const formatLocalDate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const cellWidth = 12
 const gap = 4
 
@@ -18,7 +24,7 @@ const generateYearData = (inputData: HeatmapData[] = [], maxDays: number = 365) 
   for (let i = maxDays - 1; i >= 0; i--) {
     const d = new Date()
     d.setDate(today.getDate() - i)
-    const dateStr = formatDate(d)
+    const dateStr = formatLocalDate(d)
     days.push({
       date: dateStr,
       fullDate: d,
