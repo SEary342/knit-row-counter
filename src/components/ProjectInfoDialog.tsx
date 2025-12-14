@@ -26,7 +26,7 @@ import { type Project } from '../features/projects/types'
 import { deleteProgressRecord } from '../features/progress/progressSlice'
 import ConfirmationDialog from './ConfirmationDialog'
 import FullscreenDataGrid from './FullscreenDataGrid'
-import Heatmap, { calculateMaxDaysForWidth } from './Heatmap'
+import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
 import { type ProgressRecord } from '../features/progress/progressSlice'
 
 function HistoryToolbar(props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) {
@@ -99,7 +99,7 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
     const dailyCounts = new Map<string, number>()
 
     for (const record of projectRecords) {
-      const date = new Date(record.timestamp).toISOString().split('T')[0]
+      const date = formatLocalDate(new Date(record.timestamp))
 
       const delta = countMode === 'rows' ? record.rowsDelta : record.stitchesDelta
       dailyCounts.set(date, (dailyCounts.get(date) || 0) + delta)
