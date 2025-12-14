@@ -40,20 +40,21 @@ jobs:
       - name: Add coverage summary
         if: always()
         run: |
-          echo "## 🧪 Test Coverage" >> $GITHUB_STEP_SUMMARY
           node -e "
             const fs = require('fs');
-            const summary = JSON.parse(
-              fs.readFileSync('coverage/coverage-summary.json', 'utf8')
-            ).total;
+            const t = JSON.parse(fs.readFileSync('coverage/coverage-summary.json')).total;
 
-            console.log(
-              `- **Lines:** ${summary.lines.pct}%\n` +
-              `- **Statements:** ${summary.statements.pct}%\n` +
-              `- **Functions:** ${summary.functions.pct}%\n` +
-              `- **Branches:** ${summary.branches.pct}%`
-            );
-          " >> $GITHUB_STEP_SUMMARY
+            const summary = [
+              '## 🧪 Test Coverage',
+              `- **Lines:** ${t.lines.pct}%`,
+              `- **Statements:** ${t.statements.pct}%`,
+              `- **Functions:** ${t.functions.pct}%`,
+              `- **Branches:** ${t.branches.pct}%`
+            ].join('\n');
+
+            // Append to GitHub Actions step summary
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
+          "
 
       - name: Upload coverage report
         if: always()
