@@ -40,4 +40,4 @@ jobs:
       - name: Add coverage summary
         if: always()
         run: |
-          node scripts/coverage-summary.js
+          node scripts/coverage-summary.cjs
