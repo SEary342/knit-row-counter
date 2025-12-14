@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react'
-import { Box, Tooltip, Typography, useTheme, useMediaQuery } from '@mui/material'
+import { Box, Tooltip, Typography, useTheme, useMediaQuery, alpha } from '@mui/material'
 
 export interface HeatmapData {
   date: string // YYYY-MM-DD
@@ -122,11 +122,31 @@ const Heatmap = ({
     return labels
   }, [calendarData, effectiveMaxDays])
 
+  const maxCount = useMemo(() => {
+    const counts = calendarData.map((d) => d.count).filter((c) => c > 0)
+    return counts.length > 0 ? Math.max(...counts) : 0
+  }, [calendarData])
+
   const getColor = (count: number) => {
-    if (count === 0) return theme.palette.mode === 'dark' ? '#161b22' : '#ebedf0'
-    if (count <= 2) return theme.palette.primary.light
-    if (count <= 5) return theme.palette.primary.main
-    return theme.palette.primary.dark
+    if (count === 0) {
+      return theme.palette.mode === 'dark' ? '#161b22' : '#ebedf0'
+    }
+
+    if (maxCount === 0) {
+      return alpha(theme.palette.primary.main, 0.2)
+    }
+
+    const ratio = count / maxCount
+
+    // Clamp just to be safe
+    const clamped = Math.min(Math.max(ratio, 0), 1)
+
+    const minAlpha = theme.palette.mode === 'dark' ? 0.25 : 0.15
+    const maxAlpha = 0.95
+
+    const alphaValue = minAlpha + clamped * (maxAlpha - minAlpha)
+
+    return alpha(theme.palette.primary.main, alphaValue)
   }
 
   const numWeeks = Math.ceil(calendarData.length / 7)

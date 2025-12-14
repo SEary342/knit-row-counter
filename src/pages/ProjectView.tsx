@@ -30,7 +30,7 @@ import SectionCard from '../components/SectionCard'
 import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
 import ProjectInfoDialog from '../components/ProjectInfoDialog'
-import { getTodayStats } from '../utils/stats'
+import { useProjectStats } from '../hooks/useProjectStats'
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
@@ -50,12 +50,11 @@ const ProjectView = () => {
     }
   }, [project, navigate])
 
-  if (!project) return null
-
-  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour } = getTodayStats(
-    project.id,
+  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays } = useProjectStats(
+    project,
     progressRecords,
   )
+  if (!project) return null
 
   const hasProgress = rowsToday > 0 || stitchesToday > 0
 
@@ -137,6 +136,11 @@ const ProjectView = () => {
             - Speed: {rowsPerHour.toFixed(1)} rows/hr
             {stitchesPerHour !== 0 && ` | ${stitchesPerHour.toFixed(1)} stitches/hr`}
           </Typography>
+          {estimatedDays !== null && (
+            <Typography variant="body2" component="div">
+              - Est. completion: {estimatedDays} day{estimatedDays !== 1 && 's'}
+            </Typography>
+          )}
         </Alert>
       )}
 

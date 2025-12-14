@@ -39,6 +39,15 @@ export const calculateProjectStitches = (project: Project): number => {
   }, 0)
 }
 
+export const calculateProjectTotalRows = (project: Project): number => {
+  return project.sections.reduce((total, section) => {
+    if (section.totalRepeats && section.repeatRows) {
+      return total + section.totalRepeats * section.repeatRows
+    }
+    return total
+  }, 0)
+}
+
 export const projectsSlice = createSlice({
   name: 'projects',
   initialState,
