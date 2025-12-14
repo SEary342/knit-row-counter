@@ -80,12 +80,12 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
     if (!element) return
 
     const observer = new ResizeObserver((entries) => {
-        if (entries[0]) {
-          setMaxDays(calculateMaxDays(entries[0].contentRect.width, isMobile))
-        }
-      })
+      if (entries[0]) {
+        setMaxDays(calculateMaxDays(entries[0].contentRect.width, isMobile))
+      }
+    })
 
-      observer.observe(element)
+    observer.observe(element)
 
     return () => observer.disconnect()
   }, [isMobile])
@@ -182,17 +182,43 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }} ref={containerRef}>
             <Heatmap data={heatmapData} title={chartTitle} maxDays={maxDays} verb={countMode}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={{ xs: 0.5, sm: 1 }}
+                alignItems="center"
+                flexWrap="nowrap"
+              >
                 <Switch
+                  size="small"
                   checked={countMode === 'stitches'}
                   onChange={(event) => setCountMode(event.target.checked ? 'stitches' : 'rows')}
                   slotProps={{ input: { 'aria-label': 'count by stitches or rows' } }}
                 />
-                <Typography fontWeight={countMode == 'rows' ? 'bold' : 'normal'}>Rows</Typography>
-                <Typography>/</Typography>
-                <Typography fontWeight={countMode == 'stitches' ? 'bold' : 'normal'}>
-                  Stitches
-                </Typography>
+
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={{ xs: 0, sm: 0.5 }}
+                  alignItems={{ xs: 'flex-start', sm: 'center' }}
+                  lineHeight={1}
+                >
+                  <Typography
+                    fontWeight={countMode === 'rows' ? 600 : 400}
+                    fontSize={{ xs: '0.8rem', sm: '1rem' }}
+                  >
+                    Rows
+                  </Typography>
+
+                  <Typography sx={{ display: { xs: 'none', sm: 'block' } }} fontSize="inherit">
+                    /
+                  </Typography>
+
+                  <Typography
+                    fontWeight={countMode === 'stitches' ? 600 : 400}
+                    fontSize={{ xs: '0.8rem', sm: '1rem' }}
+                  >
+                    Stitches
+                  </Typography>
+                </Stack>
               </Stack>
             </Heatmap>
             <FullscreenDataGrid height={350}>
