@@ -12,8 +12,8 @@
     "preview": "vite preview --host",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "update-favicon": "node src/components/update-favicon.mjs",
-    "release": "node update-and-build.mjs"
+    "update-favicon": "node scripts/update-favicon.mjs",
+    "release": "node scripts/update-and-build.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

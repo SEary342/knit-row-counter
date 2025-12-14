@@ -26,6 +26,7 @@ export default defineConfig({
         'src/vite-env.d.ts',
         'coverage/**',
         'eslint.config.js',
+        'scripts/**',
       ],
     },
   },
