@@ -6,12 +6,13 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  Switch,
   Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState, useRef, useEffect } from 'react'
 import {
   DataGrid,
   type GridColDef,
@@ -25,8 +26,10 @@ import { type Project } from '../features/projects/types'
 import { deleteProgressRecord } from '../features/progress/progressSlice'
 import ConfirmationDialog from './ConfirmationDialog'
 import FullscreenDataGrid from './FullscreenDataGrid'
+import Heatmap, { calculateMaxDaysForWidth } from './Heatmap'
+import { type ProgressRecord } from '../features/progress/progressSlice'
 
-function HistoryToolbar(props: GridToolbarProps) {
+function HistoryToolbar(props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) {
   // GridToolbarContainer is deprecated, using Box instead.
   return (
     <Box
@@ -44,6 +47,18 @@ interface ProjectInfoDialogProps {
   onClose: () => void
 }
 
+type CountMode = 'rows' | 'stitches'
+
+const calculateMaxDays = (width: number, isMobile: boolean) => {
+  if (width > 0) {
+    const maxDaysFromWidth = calculateMaxDaysForWidth(width)
+    // Ensure it does not exceed 365 days
+    return Math.min(maxDaysFromWidth, 365)
+  }
+  // Fallback if width is somehow 0
+  return isMobile ? 90 : 365
+}
+
 const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
@@ -51,11 +66,66 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
   const { records } = useAppSelector((s) => s.progress)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [recordToDelete, setRecordToDelete] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [countMode, setCountMode] = useState<CountMode>('rows')
+  const [maxDays, setMaxDays] = useState(365)
+
+  useEffect(() => {
+    const element = containerRef.current
+    let observer: ResizeObserver | null = null
+    let timeoutId: number | undefined
+
+    if (!open) {
+      setMaxDays(isMobile ? 90 : 365)
+      return
+    }
+
+    if (element) {
+      observer = new ResizeObserver((entries) => {
+        if (entries[0]) {
+          setMaxDays(calculateMaxDays(entries[0].contentRect.width, isMobile))
+        }
+      })
+      observer.observe(element)
+
+      timeoutId = setTimeout(() => {
+        if (containerRef.current) {
+          setMaxDays(calculateMaxDays(containerRef.current.offsetWidth, isMobile))
+        }
+      }, 50)
+    } else {
+      return
+    }
+
+    // Cleanup
+    return () => {
+      if (observer) {
+        observer.unobserve(element!)
+      }
+      clearTimeout(timeoutId)
+    }
+  }, [open, isMobile])
 
   const projectRecords = useMemo(
     () => records.filter((r) => r.projectId === project.id),
     [records, project.id],
   )
+
+  const heatmapData = useMemo(() => {
+    const dailyCounts = new Map<string, number>()
+
+    for (const record of projectRecords) {
+      const date = new Date(record.timestamp).toISOString().split('T')[0]
+
+      const delta = countMode === 'rows' ? record.rowsDelta : record.stitchesDelta
+      dailyCounts.set(date, (dailyCounts.get(date) || 0) + delta)
+    }
+
+    return Array.from(dailyCounts.entries()).map(([date, count]) => ({
+      date,
+      count,
+    }))
+  }, [projectRecords, countMode])
 
   const handleDeleteClick = (id: string) => {
     setRecordToDelete(id)
@@ -70,7 +140,7 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
     setRecordToDelete(null)
   }
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<ProgressRecord>[] = [
     {
       field: 'timestamp',
       headerName: 'Date',
@@ -107,13 +177,34 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
     },
   ]
 
+  const chartTitle =
+    countMode === 'rows' ? 'Rows Completed Activity' : 'Stitches Completed Activity'
+
   return (
     <>
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth fullScreen={isMobile}>
-        <DialogTitle>Project History & Info</DialogTitle>
+        <DialogTitle
+          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        >
+          Project History & Info
+        </DialogTitle>
         <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <FullscreenDataGrid height={400}>
+          <Stack spacing={2} sx={{ mt: 1 }} ref={containerRef}>
+            <Heatmap data={heatmapData} title={chartTitle} maxDays={maxDays} verb={countMode}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Switch
+                  checked={countMode === 'stitches'}
+                  onChange={(event) => setCountMode(event.target.checked ? 'stitches' : 'rows')}
+                  slotProps={{ input: { 'aria-label': 'count by stitches or rows' } }}
+                />
+                <Typography fontWeight={countMode == 'rows' ? 'bold' : 'normal'}>Rows</Typography>
+                <Typography>/</Typography>
+                <Typography fontWeight={countMode == 'stitches' ? 'bold' : 'normal'}>
+                  Stitches
+                </Typography>
+              </Stack>
+            </Heatmap>
+            <FullscreenDataGrid height={350}>
               <DataGrid
                 rows={projectRecords}
                 columns={columns}
