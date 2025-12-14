@@ -18,6 +18,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
+      reporter: ['text', 'json-summary', 'html'],
+      reportsDirectory: './coverage',
       exclude: [
         'src/tests/**',
         'vite.config.ts',
