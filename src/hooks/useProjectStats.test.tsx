@@ -13,7 +13,7 @@ describe('useProjectStats', () => {
     vi.useFakeTimers()
     vi.setSystemTime(MOCK_DATE_NOW)
   })
-  
+
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -154,37 +154,42 @@ describe('useProjectStats', () => {
     expect(result.current.stitchesToday).toBe(50 + 30 - 10) // 70
   })
 
-  it('should only use the last 10 records for speed calculation', () => {
-    const records: ProgressRecord[] = []
-    // Create 12 records, 1 minute apart
-    for (let i = 0; i < 12; i++) {
-      records.push({
-        id: `rec-${i}`, // Add a unique ID for each record
+  it('should only use records from the last hour for speed calculation', () => {
+    const records: ProgressRecord[] = [
+      {
+        id: 'rec-old',
         projectId: mockProject.id,
         sectionId: 's1',
-        timestamp: MOCK_DATE_NOW.getTime() - (11 - i) * 60 * 1000,
-        rowsDelta: 1,
-        stitchesDelta: 10,
-      })
-    }
+        timestamp: MOCK_DATE_NOW.getTime() - 90 * 60 * 1000, // 90 mins ago
+        rowsDelta: 100,
+        stitchesDelta: 1000,
+      },
+      {
+        id: 'rec-1',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 30 * 60 * 1000, // 30 mins ago
+        rowsDelta: 10,
+        stitchesDelta: 100,
+      },
+      {
+        id: 'rec-2',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime(), // Now
+        rowsDelta: 10,
+        stitchesDelta: 100,
+      },
+    ]
 
     const { result } = renderHook(() => useProjectStats(mockProject, records))
 
-    // Speed should be based on the last 10 records (indices 2 to 11)
-    const recentRecords = records.slice(-10)
-    const timeSpanHours =
-      (recentRecords[9].timestamp - recentRecords[0].timestamp) / (1000 * 60 * 60)
-
-    // Sum of deltas for the last 9 records in the recent slice
-    const totalRows = 9
-    const totalStitches = 90
-
-    expect(result.current.rowsPerHour).toBeCloseTo(totalRows / timeSpanHours) // 9 rows / 9 minutes
-    expect(result.current.stitchesPerHour).toBeCloseTo(totalStitches / timeSpanHours) // 90 stitches / 9 minutes
-
-    // 9 rows in 9 minutes is 1 row/min, which is 60 rows/hr
-    expect(result.current.rowsPerHour).toBeCloseTo(60)
-    expect(result.current.stitchesPerHour).toBeCloseTo(600)
+    // Speed calculation should only consider rec-1 and rec-2
+    // Time span: 30 mins (0.5 hours)
+    // Rows delta sum (excluding first record of window): 10
+    // Speed: 10 / 0.5 = 20 rows/hr
+    expect(result.current.rowsPerHour).toBeCloseTo(20)
+    expect(result.current.stitchesPerHour).toBeCloseTo(200)
   })
 
   it('should correctly calculate estimated days to completion', () => {
