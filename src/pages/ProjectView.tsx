@@ -9,7 +9,6 @@ import {
   TextField,
   Button,
   Grid,
-  Alert,
   Tooltip,
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
@@ -31,6 +30,7 @@ import GlobalCard from '../components/GlobalCard'
 import SectionDialog from '../components/SectionDialog'
 import ProjectInfoDialog from '../components/ProjectInfoDialog'
 import { useProjectStats } from '../hooks/useProjectStats'
+import ProgressAlert from '../components/ProgressAlert'
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()
@@ -50,10 +50,8 @@ const ProjectView = () => {
     }
   }, [project, navigate])
 
-  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays } = useProjectStats(
-    project,
-    progressRecords,
-  )
+  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays, estimatedHours } =
+    useProjectStats(project, progressRecords)
   if (!project) return null
 
   const hasProgress = rowsToday > 0 || stitchesToday > 0
@@ -126,22 +124,14 @@ const ProjectView = () => {
       </Stack>
 
       {hasProgress && (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography variant="subtitle2">Today's Progress</Typography>
-          <Typography variant="body2" component="div">
-            - Rows: {rowsToday}
-            {stitchesToday !== 0 && ` | Stitches: ${stitchesToday}`}
-          </Typography>
-          <Typography variant="body2" component="div">
-            - Speed: {rowsPerHour.toFixed(1)} rows/hr
-            {stitchesPerHour !== 0 && ` | ${stitchesPerHour.toFixed(1)} stitches/hr`}
-          </Typography>
-          {estimatedDays !== null && (
-            <Typography variant="body2" component="div">
-              - Est. completion: {estimatedDays} day{estimatedDays !== 1 && 's'}
-            </Typography>
-          )}
-        </Alert>
+        <ProgressAlert
+          rowsToday={rowsToday}
+          stitchesToday={stitchesToday}
+          rowsPerHour={rowsPerHour}
+          stitchesPerHour={stitchesPerHour}
+          estimatedDays={estimatedDays}
+          estimatedHours={estimatedHours}
+        />
       )}
 
       <Grid container spacing={3}>
