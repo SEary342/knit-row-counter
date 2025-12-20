@@ -27,7 +27,7 @@ async function runCommand(command) {
   } catch (error) {
     console.error(`\nERROR executing command: ${command}`)
     console.error(error.message)
-    process.exit(1)
+    throw error
   }
 }
 
@@ -115,10 +115,45 @@ async function updateVersions() {
 }
 
 /**
+ * Restores the version in package.json and package-lock.json.
+ * @param {string} version - The version to restore.
+ */
+async function restoreVersion(version) {
+  console.log(`\nRolling back to version: ${version}`)
+  try {
+    // Restore package.json
+    const packageData = JSON.parse(await readFile(PACKAGE_PATH, 'utf8'))
+    packageData.version = version
+    await writeFile(PACKAGE_PATH, JSON.stringify(packageData, null, 2) + '\n')
+
+    // Restore package-lock.json
+    try {
+      const lockData = JSON.parse(await readFile(LOCK_PATH, 'utf8'))
+      lockData.version = version
+      if (lockData.packages && lockData.packages['']) {
+        lockData.packages[''].version = version
+      }
+      await writeFile(LOCK_PATH, JSON.stringify(lockData, null, 2) + '\n')
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.error(`Warning: Could not restore package-lock.json: ${error.message}`)
+      }
+    }
+    console.log('Rollback successful.')
+  } catch (error) {
+    console.error(`CRITICAL ERROR: Failed to rollback version: ${error.message}`)
+  }
+}
+
+/**
  * Main execution function.
  */
 async function main() {
+  let originalVersion
   try {
+    const packageData = JSON.parse(await readFile(PACKAGE_PATH, 'utf8'))
+    originalVersion = packageData.version || '0.0.0'
+
     // Step 1: Update the version numbers
     const finalVersion = await updateVersions()
 
@@ -129,7 +164,12 @@ async function main() {
       `\n\n✅ Script completed successfully: App released at version **${finalVersion}**!`,
     )
   } catch (error) {
-    console.error('\n❌ An unhandled error occurred during the script execution.')
+    if (originalVersion) {
+      console.error('\n❌ An error occurred. Attempting to rollback version...')
+      await restoreVersion(originalVersion)
+    } else {
+      console.error('\n❌ An unhandled error occurred during the script execution.')
+    }
     console.error(error)
     process.exit(1)
   }
