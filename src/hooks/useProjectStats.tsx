@@ -57,37 +57,45 @@ const calculateSpeed = (projectRecords: ProgressRecord[]) => {
  * This is based on the average number of rows completed per day.
  * @param project - The project object.
  * @param projectRecords - All progress records for the project.
- * @returns The estimated number of days remaining, or null if it can't be calculated.
+ * @param rowsPerHour - The current knitting speed in rows per hour.
+ * @returns An object with estimated days and hours remaining.
  */
-const calculateEstimatedCompletion = (project: Project, projectRecords: ProgressRecord[]) => {
-  if (projectRecords.length === 0) {
-    return null
-  }
+const calculateEstimatedCompletion = (
+  project: Project,
+  projectRecords: ProgressRecord[],
+  rowsPerHour: number,
+) => {
+  const totalProjectRows = project.totalRows ?? calculateProjectTotalRows(project)
+  const rowsRemaining = totalProjectRows - project.currentRow
+  let estimatedDays: number | null = null
+  let estimatedHours: number | null = null
 
-  const dailyRows = new Map<string, number>()
-  for (const record of projectRecords) {
-    // Only consider progress, not decrements, for average speed
-    if (record.rowsDelta > 0) {
-      const date = new Date(record.timestamp).toISOString().split('T')[0]
-      dailyRows.set(date, (dailyRows.get(date) || 0) + record.rowsDelta)
+  if (projectRecords.length > 0) {
+    const dailyRows = new Map<string, number>()
+    for (const record of projectRecords) {
+      // Only consider progress, not decrements, for average speed
+      if (record.rowsDelta > 0) {
+        const date = new Date(record.timestamp).toISOString().split('T')[0]
+        dailyRows.set(date, (dailyRows.get(date) || 0) + record.rowsDelta)
+      }
+    }
+
+    if (dailyRows.size > 0) {
+      const averageRowsPerDay =
+        Array.from(dailyRows.values()).reduce((sum, r) => sum + r, 0) / dailyRows.size
+
+      if (averageRowsPerDay > 0 && rowsRemaining > 0) {
+        // Round to two decimal places
+        estimatedDays = Math.round((rowsRemaining / averageRowsPerDay) * 100) / 100
+      }
     }
   }
 
-  if (dailyRows.size === 0) {
-    return null
+  if (rowsPerHour > 0 && rowsRemaining > 0) {
+    estimatedHours = Math.round((rowsRemaining / rowsPerHour) * 100) / 100
   }
 
-  const averageRowsPerDay =
-    Array.from(dailyRows.values()).reduce((sum, r) => sum + r, 0) / dailyRows.size
-  const totalProjectRows = project.totalRows ?? calculateProjectTotalRows(project)
-  const rowsRemaining = totalProjectRows - project.currentRow
-
-  if (averageRowsPerDay > 0 && rowsRemaining > 0) {
-    // Round to two decimal places
-    return Math.round((rowsRemaining / averageRowsPerDay) * 100) / 100
-  }
-
-  return null
+  return { estimatedDays, estimatedHours }
 }
 
 export const useProjectStats = (project: Project | undefined, records: ProgressRecord[]) => {
@@ -99,6 +107,7 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
         rowsPerHour: 0,
         stitchesPerHour: 0,
         estimatedDays: null,
+        estimatedHours: null,
       }
     }
 
@@ -106,8 +115,12 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
 
     const { rowsToday, stitchesToday } = calculateTodayStats(allProjectRecords)
     const { rowsPerHour, stitchesPerHour } = calculateSpeed(allProjectRecords)
-    const estimatedDays = calculateEstimatedCompletion(project, allProjectRecords)
+    const { estimatedDays, estimatedHours } = calculateEstimatedCompletion(
+      project,
+      allProjectRecords,
+      rowsPerHour,
+    )
 
-    return { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays }
+    return { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays, estimatedHours }
   }, [project, records])
 }

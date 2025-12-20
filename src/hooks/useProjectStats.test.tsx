@@ -37,6 +37,7 @@ describe('useProjectStats', () => {
       rowsPerHour: 0,
       stitchesPerHour: 0,
       estimatedDays: null,
+      estimatedHours: null,
     })
   })
 
@@ -49,6 +50,7 @@ describe('useProjectStats', () => {
       rowsPerHour: 0,
       stitchesPerHour: 0,
       estimatedDays: null,
+      estimatedHours: null,
     })
   })
 
@@ -70,6 +72,7 @@ describe('useProjectStats', () => {
       rowsPerHour: 0,
       stitchesPerHour: 0,
       estimatedDays: null,
+      estimatedHours: null,
     })
   })
 
@@ -224,5 +227,71 @@ describe('useProjectStats', () => {
   it('should return null for estimatedDays if average rows per day is zero or negative', () => {
     const { result } = renderHook(() => useProjectStats(mockProject, []))
     expect(result.current.estimatedDays).toBeNull()
+  })
+
+  it('should correctly calculate estimated hours remaining', () => {
+    const project = { ...mockProject, currentRow: 50, totalRows: 100 }
+    const records: ProgressRecord[] = [
+      {
+        id: 'rec-1',
+        projectId: project.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 30 * 60 * 1000, // 30 mins ago
+        rowsDelta: 0, // Baseline
+        stitchesDelta: 0,
+      },
+      {
+        id: 'rec-2',
+        projectId: project.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime(), // Now
+        rowsDelta: 10, // 10 rows done in 30 mins
+        stitchesDelta: 100,
+      },
+    ]
+
+    const { result } = renderHook(() => useProjectStats(project, records))
+
+    // Speed: 20 rows/hr
+    // Remaining: 50 rows
+    // Est: 50 / 20 = 2.5 hrs
+    expect(result.current.estimatedHours).toBe(2.5)
+  })
+
+  it('should return null for estimated hours when speed is 0', () => {
+    const project = { ...mockProject, currentRow: 50, totalRows: 100 }
+    // No records in last hour -> speed 0
+    const records: ProgressRecord[] = []
+
+    const { result } = renderHook(() => useProjectStats(project, records))
+
+    expect(result.current.estimatedHours).toBeNull()
+  })
+
+  it('should return null for estimated hours when no rows remaining', () => {
+    const project = { ...mockProject, currentRow: 100, totalRows: 100 }
+    // Valid speed setup (same as first test)
+    const records: ProgressRecord[] = [
+      {
+        id: 'rec-1',
+        projectId: project.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 30 * 60 * 1000,
+        rowsDelta: 0,
+        stitchesDelta: 0,
+      },
+      {
+        id: 'rec-2',
+        projectId: project.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime(),
+        rowsDelta: 10,
+        stitchesDelta: 100,
+      },
+    ]
+
+    const { result } = renderHook(() => useProjectStats(project, records))
+
+    expect(result.current.estimatedHours).toBeNull()
   })
 })
