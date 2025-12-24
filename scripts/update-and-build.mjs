@@ -103,7 +103,7 @@ async function main() {
       await runInteractiveCommand(`git commit -m "chore: final release build ${tagName}" --allow-empty`)
       
       // If this stalls, you will now see the GPG prompt in your terminal!
-      //await runInteractiveCommand(`git tag -a ${tagName} -m "Release ${tagName}"`)
+      await runInteractiveCommand(`git tag -a ${tagName} -m "Release ${tagName}"`)
       
       console.log(`\n✅ Tagged as **${tagName}**!`)
     }
