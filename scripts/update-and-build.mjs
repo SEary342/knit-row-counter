@@ -1,9 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { exec as execCallback } from 'node:child_process'
-import { promisify } from 'node:util'
-
-const exec = promisify(execCallback)
+import { spawn, execSync } from 'node:child_process'
 
 // --- Configuration ---
 const PACKAGE_PATH = resolve(process.cwd(), 'package.json')
@@ -14,15 +11,30 @@ const isFinishMode = args.includes('--finish')
 const manualVersion = args.find(arg => !arg.startsWith('--'))
 
 /**
- * Executes a shell command and returns output.
+ * Executes a shell command. 
+ * Use 'inherit' for stdio so user can interact with prompts (like GPG).
  */
-async function runCommand(command) {
+function runInteractiveCommand(command) {
+  return new Promise((resolve, reject) => {
+    console.log(`\n--- Running: ${command} ---`)
+    const [cmd, ...args] = command.split(' ')
+    const child = spawn(cmd, args, { stdio: 'inherit', shell: true })
+
+    child.on('close', (code) => {
+      if (code === 0) resolve()
+      else reject(new Error(`Command failed with code ${code}`))
+    })
+  })
+}
+
+/**
+ * Executes a command and returns the string output (for branch/version checks).
+ */
+function getCommandOutput(command) {
   try {
-    const { stdout, stderr } = await exec(command)
-    return stdout.trim()
+    return execSync(command, { encoding: 'utf8' }).trim()
   } catch (error) {
-    console.error(`\n❌ Error executing: ${command}`)
-    throw error
+    return ''
   }
 }
 
@@ -30,24 +42,13 @@ async function runCommand(command) {
  * Logic to determine the version.
  */
 function calculateVersion(currentVersion) {
-  if (manualVersion) {
-    console.log(`💡 Using CLI override version: **${manualVersion}**`)
-    return manualVersion
-  }
-
-  if (isFinishMode) {
-    console.log(`🏁 Finish mode: Using current version **${currentVersion}**`)
-    return currentVersion
-  }
+  if (manualVersion) return manualVersion
+  if (isFinishMode) return currentVersion
 
   const parts = currentVersion.split('.').map(Number)
-  if (parts.length < 3 || parts.some(isNaN)) {
-    throw new Error(`Cannot parse version "${currentVersion}".`)
-  }
+  if (parts.length < 3 || parts.some(isNaN)) throw new Error(`Cannot parse version "${currentVersion}".`)
   parts[2]++
-  const newVersion = parts.join('.')
-  console.log(`📈 Auto-incrementing: ${currentVersion} -> **${newVersion}**`)
-  return newVersion
+  return parts.join('.')
 }
 
 async function updateFiles(newVersion) {
@@ -60,61 +61,51 @@ async function updateFiles(newVersion) {
     lockData.version = newVersion
     if (lockData.packages?.['']) lockData.packages[''].version = newVersion
     await writeFile(LOCK_PATH, JSON.stringify(lockData, null, 2) + '\n')
-  } catch (e) {
-    // Lock file optional
-  }
+  } catch (e) {}
 }
 
 async function main() {
   try {
-    // 1. Get current branch state
-    const currentBranch = await runCommand('git rev-parse --abbrev-ref HEAD')
+    const currentBranch = getCommandOutput('git rev-parse --abbrev-ref HEAD')
     const packageData = JSON.parse(await readFile(PACKAGE_PATH, 'utf8'))
     const currentVersion = packageData.version || '0.0.0'
+    const targetVersion = calculateVersion(currentVersion)
 
     if (!isFinishMode) {
-      // --- START FLOW ---
-      
-      // Safety Check: Only allow starting from 'main'
       if (currentBranch !== 'main') {
-        console.error(`\n🚫 Error: You must be on the **main** branch to start a release.`)
-        console.error(`Currently on: ${currentBranch}`)
+        console.error(`\n🚫 Error: Must be on 'main' to start (Currently: ${currentBranch})`)
         process.exit(1)
       }
 
-      const targetVersion = calculateVersion(currentVersion)
-      console.log('🚀 Starting new development branch...')
-      
+      console.log(`🚀 Starting release: **${targetVersion}**`)
       await updateFiles(targetVersion)
       
       const branchName = `release/v${targetVersion}`
-      await runCommand(`git checkout -b ${branchName}`)
-      await runCommand(`git add package.json package-lock.json`)
-      await runCommand(`git commit -m "chore: start release ${targetVersion}"`)
+      await runInteractiveCommand(`git checkout -b ${branchName}`)
+      await runInteractiveCommand(`git add package.json package-lock.json`)
+      await runInteractiveCommand(`git commit -m "chore: start release ${targetVersion}"`)
       
-      console.log(`\n✅ Successfully created branch **${branchName}** from main.`)
+      console.log(`\n✅ Branch **${branchName}** created.`)
 
     } else {
-      // --- FINISH FLOW ---
-      const targetVersion = calculateVersion(currentVersion)
-      console.log('🏗️ Finishing release build...')
+      console.log(`🏗️ Finishing release: **${targetVersion}**`)
       
-      // Ensure we are actually on a release branch
       if (!currentBranch.startsWith('release/v')) {
-        console.warn(`⚠️ Warning: You are finishing a release while on "${currentBranch}". Usually, this is done on a release branch.`)
+        console.warn(`⚠️ Warning: Not on a release branch (Currently: ${currentBranch})`)
       }
 
       await updateFiles(targetVersion)
-      
-      console.log('--- Running Build ---')
-      await runCommand('npm run build')
+      await runInteractiveCommand('npm run build')
       
       const tagName = `v${targetVersion}`
-      await runCommand(`git add .`)
-      await runCommand(`git commit -m "chore: final release build ${tagName}" --allow-empty`)
-      await runCommand(`git tag ${tagName}`)
+      await runInteractiveCommand(`git add .`)
+      // Added --allow-empty to prevent stalls if nothing changed in build
+      await runInteractiveCommand(`git commit -m "chore: final release build ${tagName}" --allow-empty`)
       
-      console.log(`\n✅ Build completed and tagged as **${tagName}**!`)
+      // If this stalls, you will now see the GPG prompt in your terminal!
+      await runInteractiveCommand(`git tag -a ${tagName} -m "Release ${tagName}"`)
+      
+      console.log(`\n✅ Tagged as **${tagName}**!`)
     }
   } catch (error) {
     console.error(`\n❌ Script failed:`, error.message)
