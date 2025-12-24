@@ -1,7 +1,7 @@
 {
   "name": "knit-row-counter",
   "private": true,
-  "version": "0.0.15",
+  "version": "0.0.16",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -13,7 +13,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "update-favicon": "node scripts/update-favicon.mjs",
-    "release": "node scripts/update-and-build.mjs"
+    "release:start": "node scripts/update-and-build.mjs",
+    "release:finish": "node scripts/update-and-build.mjs --finish"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
