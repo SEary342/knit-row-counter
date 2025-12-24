@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import ProgressAlert from './ProgressAlert'
 
 describe('ProgressAlert', () => {
@@ -9,6 +10,7 @@ describe('ProgressAlert', () => {
     stitchesPerHour: 0,
     estimatedDays: null,
     estimatedHours: null,
+    averageRowsPerDay: 0,
   }
 
   it('renders basic progress correctly', () => {
@@ -33,18 +35,43 @@ describe('ProgressAlert', () => {
   })
 
   it('renders estimated completion when provided', () => {
-    render(<ProgressAlert {...defaultProps} estimatedDays={2} estimatedHours={5} />)
+    render(
+      <ProgressAlert
+        {...defaultProps}
+        estimatedDays={2}
+        estimatedHours={5}
+        averageRowsPerDay={15}
+      />,
+    )
 
     expect(
-      screen.getByText(/- Est. completion: 2 days \(5 hrs at current speed\)/),
+      screen.getByText(/- Est. completion: 2 days \(5 hrs at 15 rows\/day\)/),
     ).toBeInTheDocument()
   })
 
   it('handles singular units correctly for estimation', () => {
-    render(<ProgressAlert {...defaultProps} estimatedDays={1} estimatedHours={1} />)
+    render(
+      <ProgressAlert
+        {...defaultProps}
+        estimatedDays={1}
+        estimatedHours={1}
+        averageRowsPerDay={10}
+      />,
+    )
 
     expect(
-      screen.getByText(/- Est. completion: 1 day \(1 hr at current speed\)/),
+      screen.getByText(/- Est. completion: 1 day \(1 hr at 10 rows\/day\)/),
     ).toBeInTheDocument()
+  })
+
+  it('renders history button and calls callback when clicked', () => {
+    const onOpenHistory = vi.fn()
+    render(<ProgressAlert {...defaultProps} onOpenHistory={onOpenHistory} />)
+
+    const historyButton = screen.getByRole('button', { name: /view history/i })
+    expect(historyButton).toBeInTheDocument()
+
+    fireEvent.click(historyButton)
+    expect(onOpenHistory).toHaveBeenCalledTimes(1)
   })
 })

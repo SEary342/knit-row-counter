@@ -21,7 +21,12 @@ const generateYearData = (inputData: HeatmapData[] = [], maxDays: number = 365) 
   const days = []
   const dataMap = new Map(inputData.map((d) => [d.date, d.count]))
 
-  for (let i = maxDays - 1; i >= 0; i--) {
+  const startDate = new Date(today)
+  startDate.setDate(today.getDate() - maxDays + 1)
+  const daysToSubtract = (7 - startDate.getDay()) % 7
+  const totalDays = maxDays - daysToSubtract
+
+  for (let i = totalDays - 1; i >= 0; i--) {
     const d = new Date()
     d.setDate(today.getDate() - i)
     const dateStr = formatLocalDate(d)

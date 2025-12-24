@@ -23,6 +23,8 @@ const calculateTodayStats = (projectRecords: ProgressRecord[]) => {
   return { rowsToday, stitchesToday }
 }
 
+const twoDigitRound = (num: number) => Math.round(num * 100) / 100
+
 /**
  * Calculates the recent knitting speed in rows/hour and stitches/hour.
  * Speed is based on the records from the last hour.
@@ -69,6 +71,7 @@ const calculateEstimatedCompletion = (
   const rowsRemaining = totalProjectRows - project.currentRow
   let estimatedDays: number | null = null
   let estimatedHours: number | null = null
+  let averageRowsPerDay = 0
 
   if (projectRecords.length > 0) {
     const dailyRows = new Map<string, number>()
@@ -81,21 +84,23 @@ const calculateEstimatedCompletion = (
     }
 
     if (dailyRows.size > 0) {
-      const averageRowsPerDay =
+      averageRowsPerDay =
         Array.from(dailyRows.values()).reduce((sum, r) => sum + r, 0) / dailyRows.size
 
       if (averageRowsPerDay > 0 && rowsRemaining > 0) {
         // Round to two decimal places
-        estimatedDays = Math.round((rowsRemaining / averageRowsPerDay) * 100) / 100
+        estimatedDays = twoDigitRound(rowsRemaining / averageRowsPerDay)
       }
     }
   }
 
   if (rowsPerHour > 0 && rowsRemaining > 0) {
-    estimatedHours = Math.round((rowsRemaining / rowsPerHour) * 100) / 100
+    estimatedHours = twoDigitRound(rowsRemaining / rowsPerHour)
   }
 
-  return { estimatedDays, estimatedHours }
+  const averageRowsPerDayReturn = twoDigitRound(averageRowsPerDay)
+
+  return { estimatedDays, estimatedHours, averageRowsPerDay: averageRowsPerDayReturn }
 }
 
 export const useProjectStats = (project: Project | undefined, records: ProgressRecord[]) => {
@@ -108,6 +113,7 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
         stitchesPerHour: 0,
         estimatedDays: null,
         estimatedHours: null,
+        averageRowsPerDay: 0,
       }
     }
 
@@ -115,12 +121,20 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
 
     const { rowsToday, stitchesToday } = calculateTodayStats(allProjectRecords)
     const { rowsPerHour, stitchesPerHour } = calculateSpeed(allProjectRecords)
-    const { estimatedDays, estimatedHours } = calculateEstimatedCompletion(
+    const { estimatedDays, estimatedHours, averageRowsPerDay } = calculateEstimatedCompletion(
       project,
       allProjectRecords,
       rowsPerHour,
     )
 
-    return { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays, estimatedHours }
+    return {
+      rowsToday,
+      stitchesToday,
+      rowsPerHour,
+      stitchesPerHour,
+      estimatedDays,
+      estimatedHours,
+      averageRowsPerDay,
+    }
   }, [project, records])
 }
