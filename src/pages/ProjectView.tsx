@@ -11,7 +11,7 @@ import {
   Grid,
   Tooltip,
 } from '@mui/material'
-import InfoIcon from '@mui/icons-material/Info'
+import DonutLarge from '@mui/icons-material/DonutLarge'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
@@ -50,8 +50,15 @@ const ProjectView = () => {
     }
   }, [project, navigate])
 
-  const { rowsToday, stitchesToday, rowsPerHour, stitchesPerHour, estimatedDays, estimatedHours } =
-    useProjectStats(project, progressRecords)
+  const {
+    rowsToday,
+    stitchesToday,
+    rowsPerHour,
+    stitchesPerHour,
+    estimatedDays,
+    estimatedHours,
+    averageRowsPerDay,
+  } = useProjectStats(project, progressRecords)
   if (!project) return null
 
   const hasProgress = rowsToday > 0 || stitchesToday > 0
@@ -131,6 +138,8 @@ const ProjectView = () => {
           stitchesPerHour={stitchesPerHour}
           estimatedDays={estimatedDays}
           estimatedHours={estimatedHours}
+          averageRowsPerDay={averageRowsPerDay}
+          onOpenHistory={() => setInfoDialogOpen(true)}
         />
       )}
 
@@ -176,7 +185,7 @@ const ProjectView = () => {
             </Tooltip>
             <Tooltip title="Project History & Info">
               <IconButton onClick={() => setInfoDialogOpen(true)}>
-                <InfoIcon />
+                <DonutLarge />
               </IconButton>
             </Tooltip>
             <input

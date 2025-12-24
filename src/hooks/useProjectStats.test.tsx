@@ -38,6 +38,7 @@ describe('useProjectStats', () => {
       stitchesPerHour: 0,
       estimatedDays: null,
       estimatedHours: null,
+      averageRowsPerDay: 0,
     })
   })
 
@@ -51,6 +52,7 @@ describe('useProjectStats', () => {
       stitchesPerHour: 0,
       estimatedDays: null,
       estimatedHours: null,
+      averageRowsPerDay: 0,
     })
   })
 
@@ -73,6 +75,7 @@ describe('useProjectStats', () => {
       stitchesPerHour: 0,
       estimatedDays: null,
       estimatedHours: null,
+      averageRowsPerDay: 0,
     })
   })
 
