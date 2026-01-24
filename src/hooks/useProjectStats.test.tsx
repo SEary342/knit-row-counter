@@ -39,6 +39,8 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
+      rateTrend: null,
     })
   })
 
@@ -53,6 +55,8 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
+      rateTrend: null,
     })
   })
 
@@ -76,6 +80,8 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
+      rateTrend: null,
     })
   })
 
@@ -296,5 +302,47 @@ describe('useProjectStats', () => {
     const { result } = renderHook(() => useProjectStats(project, records))
 
     expect(result.current.estimatedHours).toBeNull()
+  })
+
+  it('should calculate rate trend correctly', () => {
+    const records: ProgressRecord[] = [
+      {
+        id: '1',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 20 * 60 * 1000, // 20 mins ago
+        rowsDelta: 1,
+        stitchesDelta: 10,
+      },
+      {
+        id: '2',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 10 * 60 * 1000, // 10 mins ago (duration 10m)
+        rowsDelta: 1,
+        stitchesDelta: 10,
+      },
+      {
+        id: '3',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 5 * 60 * 1000, // 5 mins ago (duration 5m)
+        rowsDelta: 1,
+        stitchesDelta: 10,
+      },
+      // Rapid succession row (should be ignored)
+      {
+        id: '4',
+        projectId: mockProject.id,
+        sectionId: 's1',
+        timestamp: MOCK_DATE_NOW.getTime() - 5 * 60 * 1000 + 2000, // 2s later
+        rowsDelta: 1,
+        stitchesDelta: 10,
+      },
+    ]
+
+    const { result } = renderHook(() => useProjectStats(mockProject, records))
+    // Previous valid duration: 10m. Current valid duration: 5m. Rate increasing.
+    expect(result.current.rateTrend).toBe('increasing')
   })
 })

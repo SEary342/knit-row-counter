@@ -4,6 +4,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
 import DonutSmallIcon from '@mui/icons-material/DonutSmall'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import TrendingDownIcon from '@mui/icons-material/TrendingDown'
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
+import GestureIcon from '@mui/icons-material/Gesture'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { toggleShowStitches } from '../features/ui/uiSlice'
 
 interface ProgressAlertProps {
   rowsToday: number
@@ -13,6 +19,8 @@ interface ProgressAlertProps {
   estimatedDays: number | null
   estimatedHours: number | null
   averageRowsPerDay: number
+  lastRowMinutes: number | null
+  rateTrend: 'increasing' | 'decreasing' | 'stable' | null
   onOpenHistory?: () => void
 }
 
@@ -27,8 +35,12 @@ const ProgressAlert = ({
   estimatedDays,
   estimatedHours,
   averageRowsPerDay,
+  lastRowMinutes,
+  rateTrend,
   onOpenHistory,
 }: ProgressAlertProps) => {
+  const dispatch = useAppDispatch()
+  const showStitches = useAppSelector((s) => s.ui.showStitches)
   const [open, setOpen] = useState(true)
   const showDetails = rowsPerHour > 0 && rowsPerHour < 100
 
@@ -52,6 +64,17 @@ const ProgressAlert = ({
               </IconButton>
             </Tooltip>
           )}
+          <Tooltip title={showStitches ? 'Hide Stitches' : 'Show Stitches'}>
+            <IconButton
+              aria-label="toggle stitches"
+              color="inherit"
+              size="small"
+              onClick={() => dispatch(toggleShowStitches())}
+              sx={{ mr: 0.5, opacity: showStitches ? 1 : 0.5 }}
+            >
+              <GestureIcon fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
           <IconButton
             aria-label="toggle progress details"
             color="inherit"
@@ -69,14 +92,36 @@ const ProgressAlert = ({
       <Collapse in={open}>
         <Typography variant="body2" component="div">
           - Rows: {rowsToday}
-          {stitchesToday !== 0 && ` | Stitches: ${stitchesToday}`}
+          {showStitches && stitchesToday !== 0 && ` | Stitches: ${stitchesToday}`}
         </Typography>
+        {lastRowMinutes !== null && (
+          <Typography variant="body2" component="div">
+            - Last row duration: {lastRowMinutes} min
+          </Typography>
+        )}
         {showDetails && (
           <Box>
-            <Typography variant="body2" component="div">
-              - Speed: {rowsPerHour.toFixed(1)} rows/hr
-              {stitchesPerHour !== 0 && ` | ${stitchesPerHour.toFixed(1)} stitches/hr`}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" component="div">
+                - Speed: {rowsPerHour.toFixed(1)} rows/hr
+                {showStitches &&
+                  stitchesPerHour !== 0 &&
+                  ` | ${stitchesPerHour.toFixed(1)} stitches/hr`}
+              </Typography>
+              {rateTrend && (
+                <Tooltip title={`Rate is ${rateTrend}`}>
+                  <Box component="span" sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                    {rateTrend === 'increasing' && (
+                      <TrendingUpIcon color="success" fontSize="small" />
+                    )}
+                    {rateTrend === 'decreasing' && (
+                      <TrendingDownIcon color="error" fontSize="small" />
+                    )}
+                    {rateTrend === 'stable' && <TrendingFlatIcon color="action" fontSize="small" />}
+                  </Box>
+                </Tooltip>
+              )}
+            </Box>
             {estimatedDays !== null && (
               <Typography variant="body2" component="div">
                 - Est. completion: {pluralText('day', estimatedDays)} (

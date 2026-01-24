@@ -58,14 +58,11 @@ export default function ProjectPickerView() {
   }
 
   const handleCreate = (name: string) => {
-    dispatch(createProject({ name }))
+    const action = dispatch(createProject({ name }))
     setOpenNew(false)
-
-    // Navigate to last project after a tiny delay (works for skeleton)
-    setTimeout(() => {
-      const last = projects[projects.length - 1] // only this is used
-      if (last) navigate(`/project/${last.id}`)
-    }, 50)
+    if ((action.payload as Project).id) {
+      navigate(`/project/${(action.payload as Project).id}`)
+    }
   }
 
   const handleSelect = (id: string) => {

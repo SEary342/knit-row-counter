@@ -103,6 +103,50 @@ const calculateEstimatedCompletion = (
   return { estimatedDays, estimatedHours, averageRowsPerDay: averageRowsPerDayReturn }
 }
 
+const calculateLastRowMinutes = (projectRecords: ProgressRecord[]) => {
+  if (projectRecords.length < 2) return null
+
+  // Sort by timestamp descending to find the most recent records
+  const sorted = [...projectRecords].sort((a, b) => b.timestamp - a.timestamp)
+  const last = sorted[0]
+  const prev = sorted[1]
+
+  // Only calculate if the last record was a row increment
+  if (last.rowsDelta > 0) {
+    return Math.round((last.timestamp - prev.timestamp) / 60000)
+  }
+  return null
+}
+
+const calculateRateTrend = (
+  projectRecords: ProgressRecord[],
+  rowsPerHour: number,
+): 'increasing' | 'decreasing' | 'stable' | null => {
+  const sorted = [...projectRecords]
+    .filter((r) => r.rowsDelta > 0)
+    .sort((a, b) => b.timestamp - a.timestamp)
+
+  if (sorted.length < 2) return null
+
+  const last = sorted[0]
+  const prev = sorted[1]
+
+  const durationHours = (last.timestamp - prev.timestamp) / HOUR
+  if (durationHours <= 0) return null
+
+  const currentRate = last.rowsDelta / durationHours
+
+  if (rowsPerHour === 0) {
+    return currentRate > 0 ? 'increasing' : null
+  }
+
+  const ratio = currentRate / rowsPerHour
+
+  if (ratio > 1.1) return 'increasing'
+  if (ratio < 0.9) return 'decreasing'
+  return 'stable'
+}
+
 export const useProjectStats = (project: Project | undefined, records: ProgressRecord[]) => {
   return useMemo(() => {
     if (!project) {
@@ -114,6 +158,8 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
         estimatedDays: null,
         estimatedHours: null,
         averageRowsPerDay: 0,
+        lastRowMinutes: null,
+        rateTrend: null as 'increasing' | 'decreasing' | 'stable' | null,
       }
     }
 
@@ -126,6 +172,8 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
       allProjectRecords,
       rowsPerHour,
     )
+    const lastRowMinutes = calculateLastRowMinutes(allProjectRecords)
+    const rateTrend = calculateRateTrend(allProjectRecords, rowsPerHour)
 
     return {
       rowsToday,
@@ -135,6 +183,8 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
       estimatedDays,
       estimatedHours,
       averageRowsPerDay,
+      lastRowMinutes,
+      rateTrend,
     }
   }, [project, records])
 }

@@ -2,9 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 
 interface UIState {
   darkMode: boolean
+  showStitches: boolean
 }
 
-const initialState: UIState = { darkMode: true }
+const initialState: UIState = { darkMode: true, showStitches: true }
 
 export const uiSlice = createSlice({
   name: 'ui',
@@ -13,8 +14,11 @@ export const uiSlice = createSlice({
     toggleDarkMode(state) {
       state.darkMode = !state.darkMode
     },
+    toggleShowStitches(state) {
+      state.showStitches = !state.showStitches
+    },
   },
 })
 
-export const { toggleDarkMode } = uiSlice.actions
+export const { toggleDarkMode, toggleShowStitches } = uiSlice.actions
 export default uiSlice.reducer

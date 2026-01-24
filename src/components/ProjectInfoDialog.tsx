@@ -29,17 +29,12 @@ import FullscreenDataGrid from './FullscreenDataGrid'
 import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
 import { type ProgressRecord } from '../features/progress/progressSlice'
 
-function HistoryToolbar(props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) {
-  // GridToolbarContainer is deprecated, using Box instead.
-  return (
-    <Box
-      sx={{ display: 'flex', p: 1, px: 2, justifyContent: 'space-between', alignItems: 'center' }}
-    >
-      <Typography variant="h6">Progress History</Typography>
-      {props.FullscreenToggleButton}
-    </Box>
-  )
-}
+const HistoryToolbar = (props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) => (
+  <Box sx={{ display: 'flex', p: 1, px: 2, justifyContent: 'space-between', alignItems: 'center' }}>
+    <Typography variant="h6">Progress History</Typography>
+    {props.FullscreenToggleButton}
+  </Box>
+)
 
 interface ProjectInfoDialogProps {
   project: Project
