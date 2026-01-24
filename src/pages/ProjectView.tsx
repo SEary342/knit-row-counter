@@ -58,6 +58,7 @@ const ProjectView = () => {
     estimatedDays,
     estimatedHours,
     averageRowsPerDay,
+    lastRowMinutes,
   } = useProjectStats(project, progressRecords)
   if (!project) return null
 
@@ -139,6 +140,7 @@ const ProjectView = () => {
           estimatedDays={estimatedDays}
           estimatedHours={estimatedHours}
           averageRowsPerDay={averageRowsPerDay}
+          lastRowMinutes={lastRowMinutes}
           onOpenHistory={() => setInfoDialogOpen(true)}
         />
       )}

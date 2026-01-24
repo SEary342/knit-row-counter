@@ -2,6 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import ProgressAlert from './ProgressAlert'
 
+vi.mock('../app/hooks', () => ({
+  useAppDispatch: () => vi.fn(),
+  useAppSelector: (selector: (state: any) => any) => selector({ ui: { showStitches: true } }),
+}))
+
 describe('ProgressAlert', () => {
   const defaultProps = {
     rowsToday: 10,
@@ -11,6 +16,7 @@ describe('ProgressAlert', () => {
     estimatedDays: null,
     estimatedHours: null,
     averageRowsPerDay: 0,
+    lastRowMinutes: null,
   }
 
   it('renders basic progress correctly', () => {
@@ -73,5 +79,10 @@ describe('ProgressAlert', () => {
 
     fireEvent.click(historyButton)
     expect(onOpenHistory).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders last row duration when provided', () => {
+    render(<ProgressAlert {...defaultProps} lastRowMinutes={15} />)
+    expect(screen.getByText(/- Last row duration: 15 min/)).toBeInTheDocument()
   })
 })

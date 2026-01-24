@@ -39,6 +39,7 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
     })
   })
 
@@ -53,6 +54,7 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
     })
   })
 
@@ -76,6 +78,7 @@ describe('useProjectStats', () => {
       estimatedDays: null,
       estimatedHours: null,
       averageRowsPerDay: 0,
+      lastRowMinutes: null,
     })
   })
 

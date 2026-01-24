@@ -103,6 +103,21 @@ const calculateEstimatedCompletion = (
   return { estimatedDays, estimatedHours, averageRowsPerDay: averageRowsPerDayReturn }
 }
 
+const calculateLastRowMinutes = (projectRecords: ProgressRecord[]) => {
+  if (projectRecords.length < 2) return null
+
+  // Sort by timestamp descending to find the most recent records
+  const sorted = [...projectRecords].sort((a, b) => b.timestamp - a.timestamp)
+  const last = sorted[0]
+  const prev = sorted[1]
+
+  // Only calculate if the last record was a row increment
+  if (last.rowsDelta > 0) {
+    return Math.round((last.timestamp - prev.timestamp) / 60000)
+  }
+  return null
+}
+
 export const useProjectStats = (project: Project | undefined, records: ProgressRecord[]) => {
   return useMemo(() => {
     if (!project) {
@@ -114,6 +129,7 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
         estimatedDays: null,
         estimatedHours: null,
         averageRowsPerDay: 0,
+        lastRowMinutes: null,
       }
     }
 
@@ -126,6 +142,7 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
       allProjectRecords,
       rowsPerHour,
     )
+    const lastRowMinutes = calculateLastRowMinutes(allProjectRecords)
 
     return {
       rowsToday,
@@ -135,6 +152,7 @@ export const useProjectStats = (project: Project | undefined, records: ProgressR
       estimatedDays,
       estimatedHours,
       averageRowsPerDay,
+      lastRowMinutes,
     }
   }, [project, records])
 }
