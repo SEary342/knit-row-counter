@@ -50,19 +50,10 @@ const ProjectView = () => {
     }
   }, [project, navigate])
 
-  const {
-    rowsToday,
-    stitchesToday,
-    rowsPerHour,
-    stitchesPerHour,
-    estimatedDays,
-    estimatedHours,
-    averageRowsPerDay,
-    lastRowMinutes,
-  } = useProjectStats(project, progressRecords)
+  const stats = useProjectStats(project, progressRecords)
   if (!project) return null
 
-  const hasProgress = rowsToday > 0 || stitchesToday > 0
+  const hasProgress = stats.rowsToday > 0 || stats.stitchesToday > 0
 
   // Check if any section is linked to force a visual-only sort
   const isSortForced = project.sections.some((s) => s.linked)
@@ -131,19 +122,7 @@ const ProjectView = () => {
         </Button>
       </Stack>
 
-      {hasProgress && (
-        <ProgressAlert
-          rowsToday={rowsToday}
-          stitchesToday={stitchesToday}
-          rowsPerHour={rowsPerHour}
-          stitchesPerHour={stitchesPerHour}
-          estimatedDays={estimatedDays}
-          estimatedHours={estimatedHours}
-          averageRowsPerDay={averageRowsPerDay}
-          lastRowMinutes={lastRowMinutes}
-          onOpenHistory={() => setInfoDialogOpen(true)}
-        />
-      )}
+      {hasProgress && <ProgressAlert {...stats} onOpenHistory={() => setInfoDialogOpen(true)} />}
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
