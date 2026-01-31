@@ -16,6 +16,7 @@ import { useAppDispatch } from '../app/hooks'
 import CounterCircle from './CounterCircle'
 import CounterCard from './CounterCard'
 import GlobalDialog from './GlobalDialog'
+import Fireworks from './Fireworks'
 
 interface globalCardProps {
   project: Project
@@ -41,49 +42,52 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
   const payload = linkedSectionIds.length > 0 ? linkedSectionIds : undefined
 
   return (
-    <CounterCard
-      title={
-        isFinished ? (
-          <Box component="span" display="inline-flex" alignItems="center" gap={1}>
-            Global
-            <CheckCircleIcon color="success" fontSize="small" />
-          </Box>
-        ) : (
-          'Global'
-        )
-      }
-      cardActions={
-        <GlobalDialog
-          project={project}
-          calculatedTotalRows={calculatedTotalRows}
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          trigger={
-            <Tooltip title="Global Settings">
-              <IconButton
-                size="small"
-                onClick={() => setDialogOpen(true)}
-                aria-label="global settings"
-              >
-                <SettingsIcon />
-              </IconButton>
-            </Tooltip>
-          }
+    <Box position="relative" height="100%">
+      {isFinished && <Fireworks />}
+      <CounterCard
+        title={
+          isFinished ? (
+            <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+              Global
+              <CheckCircleIcon color="success" fontSize="small" />
+            </Box>
+          ) : (
+            'Global'
+          )
+        }
+        cardActions={
+          <GlobalDialog
+            project={project}
+            calculatedTotalRows={calculatedTotalRows}
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            trigger={
+              <Tooltip title="Global Settings">
+                <IconButton
+                  size="small"
+                  onClick={() => setDialogOpen(true)}
+                  aria-label="global settings"
+                >
+                  <SettingsIcon />
+                </IconButton>
+              </Tooltip>
+            }
+          />
+        }
+      >
+        <CounterCircle
+          value={project.currentRow}
+          onIncrement={() => dispatch(incrementRow(payload))}
+          onDecrement={() => dispatch(decrementRow(payload))}
+          max={maxRows}
+          size={circleSize}
+          showFraction={false}
+          smallNote={totalStitches > 0 ? `Total Stitches: ${totalStitches.toLocaleString()}` : ''}
+          color={isFinished ? 'success' : 'primary'}
+          isFinished={isFinished}
         />
-      }
-    >
-      <CounterCircle
-        value={project.currentRow}
-        onIncrement={() => dispatch(incrementRow(payload))}
-        onDecrement={() => dispatch(decrementRow(payload))}
-        max={maxRows}
-        size={circleSize}
-        showFraction={false}
-        smallNote={totalStitches > 0 ? `Total Stitches: ${totalStitches.toLocaleString()}` : ''}
-        color={isFinished ? 'success' : 'primary'}
-        isFinished={isFinished}
-      />
-    </CounterCard>
+      </CounterCard>
+    </Box>
   )
 }
 
