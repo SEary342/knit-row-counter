@@ -1,12 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
-import projectsReducer from '../features/projects/projectsSlice'
-import uiReducer from '../features/ui/uiSlice'
-import progressReducer from '../features/progress/progressSlice'
+import { progressMiddleware } from '@src/features/progress/progressMiddleware'
+import progressReducer from '@src/features/progress/progressSlice'
+import projectsReducer from '@src/features/projects/projectsSlice'
+import uiReducer from '@src/features/ui/uiSlice'
+import { loadStateFromStorage } from '@src/utils/localStorage'
 
 import { persistenceMiddleware } from './persistenceMiddleware'
-import { progressMiddleware } from '../features/progress/progressMiddleware'
-import { loadStateFromStorage } from '../utils/localStorage'
 
 const rootReducer = combineReducers({
   projects: projectsReducer,

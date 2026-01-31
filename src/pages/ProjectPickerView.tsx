@@ -1,23 +1,24 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Box,
-  Typography,
+  Button,
+  IconButton,
   List,
   ListItem,
-  ListItemText,
-  IconButton,
-  Button,
-  Stack,
   ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { createProject, deleteProject, selectProject } from '../features/projects/projectsSlice'
-import ConfirmationDialog from '../components/ConfirmationDialog'
-import type { Project } from '../features/projects/types'
-import NewProjectDialog from '../components/NewProjectDialog'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
+import { createProject, deleteProject, selectProject } from '@src/features/projects/projectsSlice'
+import type { Project } from '@src/features/projects/types'
+
+import ConfirmationDialog from '@comp/ConfirmationDialog'
+import NewProjectDialog from '@comp/NewProjectDialog'
 
 const getSecondaryText = (project: Project) => {
   const calculatedTotalRows = project.sections.reduce((total, section) => {

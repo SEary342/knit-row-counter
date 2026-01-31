@@ -1,13 +1,27 @@
 // eslint.config.js
 import js from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import reactPlugin from 'eslint-plugin-react'
-import hooksPlugin from 'eslint-plugin-react-hooks'
+import prettierConfig from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
 import prettierPlugin from 'eslint-plugin-prettier'
-import prettierConfig from 'eslint-config-prettier'
+import reactPlugin from 'eslint-plugin-react'
+import hooksPlugin from 'eslint-plugin-react-hooks'
+import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
+export default [
+  {
+    ignores: [
+      'dist',
+      'node_modules',
+      'build',
+      'coverage',
+      '.github',
+      'backend',
+      'docs',
+      'scripts',
+      '.vscode',
+      '.venv',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   reactPlugin.configs.flat.recommended,
@@ -30,27 +44,9 @@ export default tseslint.config(
       react: { version: 'detect' },
     },
     rules: {
-      'prettier/prettier': [
-        'error',
-        {
-          singleQuote: true,
-          semi: false,
-          trailingComma: 'all',
-          printWidth: 100,
-          tabWidth: 2,
-          endOfLine: 'auto',
-        },
-      ],
+      'prettier/prettier': ['error'],
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-unused-vars': ['warn'],
-      'import/order': [
-        'warn',
-        {
-          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-          'newlines-between': 'always',
-        },
-      ],
     },
-    ignores: ['dist', 'node_modules', 'build'],
   },
-)
+]

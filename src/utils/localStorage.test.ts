@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { RootState } from '@src/app/store'
 
 import { loadStateFromStorage, saveStateToStorage } from './localStorage'
-import type { RootState } from '../app/store'
 
 const getStorageKey = (slice: keyof RootState) => `knit_slice_${slice}`
 
@@ -47,6 +48,7 @@ describe('localStorage utils', () => {
             totalRepeats: null,
             pattern: [],
             stitchCount: null,
+            locked: false,
           },
         ],
         totalRows: null,

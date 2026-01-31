@@ -1,7 +1,16 @@
 import { type Middleware, isAction } from '@reduxjs/toolkit'
-import { type RootState } from '../../app/store'
-import { calculateProjectStitches } from '../projects/projectsSlice'
+
+import { calculateProjectStitches } from '@src/features/projects/projectsSlice'
+import { type Project } from '@src/features/projects/types'
+
 import { addProgressRecord } from './progressSlice'
+
+interface MiddlewareState {
+  projects: {
+    projects: Project[]
+    currentProjectId: string | null
+  }
+}
 
 export const progressMiddleware: Middleware = (store) => (next) => (action) => {
   // Type guard to ensure we have a valid Redux action
@@ -19,7 +28,7 @@ export const progressMiddleware: Middleware = (store) => (next) => (action) => {
 
   // At this point, TypeScript knows `action` has a `type` and `payload`
 
-  const beforeState = store.getState() as RootState
+  const beforeState = store.getState() as MiddlewareState
   const beforeProject = beforeState.projects.projects.find(
     (p) => p.id === beforeState.projects.currentProjectId,
   )
@@ -34,7 +43,7 @@ export const progressMiddleware: Middleware = (store) => (next) => (action) => {
   // Let the original action proceed to update the state
   const result = next(action)
 
-  const afterState = store.getState() as RootState
+  const afterState = store.getState() as MiddlewareState
   const afterProject = afterState.projects.projects.find(
     (p) => p.id === afterState.projects.currentProjectId,
   )
