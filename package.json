@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "update-favicon": "node scripts/update-favicon.mjs",
     "release:start": "node scripts/update-and-build.mjs",
-    "release:finish": "node scripts/update-and-build.mjs --finish"
+    "release:finish": "node scripts/update-and-build.mjs --finish --lint"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
