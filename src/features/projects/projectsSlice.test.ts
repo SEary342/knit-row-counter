@@ -1,24 +1,25 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
+
 import reducer, {
-  createProject,
   addSection,
-  incrementRow,
+  createProject,
   decrementRow,
+  deleteProject,
+  deleteSection,
+  importProjects,
+  incrementRow,
+  moveSection,
+  renameProject,
+  resetProjectProgress,
+  selectProject,
   setLinked,
   setLocked,
-  selectProject,
-  deleteProject,
-  renameProject,
   setTotalRows,
-  updateSection,
-  deleteSection,
-  moveSection,
-  resetProjectProgress,
   updateNotes,
   updatePatternUrl,
-  importProjects,
+  updateSection,
 } from './projectsSlice'
-import type { ProjectsState, Project } from './types'
+import type { Project, ProjectsState } from './types'
 
 describe('projectsSlice Auto-Advance/Reverse', () => {
   const initialState: ProjectsState = {
@@ -81,7 +82,9 @@ describe('projectsSlice Auto-Advance/Reverse', () => {
   })
 
   it('should not auto-advance if next section is locked', () => {
-    let { state, s2Id } = setupProject()
+    const setup = setupProject()
+    let { state } = setup
+    const { s2Id } = setup
 
     // Lock Section 2
     state = reducer(state, setLocked({ id: s2Id, status: true }))
@@ -118,7 +121,9 @@ describe('projectsSlice Auto-Advance/Reverse', () => {
   })
 
   it('should not auto-reverse if previous section is locked', () => {
-    let { state, s1Id } = setupProject()
+    const setup = setupProject()
+    let { state } = setup
+    const { s1Id } = setup
 
     // Advance to Section 2
     state = reducer(state, incrementRow(undefined))

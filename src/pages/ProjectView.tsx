@@ -1,36 +1,36 @@
-import React from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import Add from '@mui/icons-material/Add'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import DonutLarge from '@mui/icons-material/DonutLarge'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
 import {
   Box,
-  Typography,
-  Stack,
-  Paper,
-  IconButton,
-  TextField,
   Button,
   Grid,
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
   Tooltip,
+  Typography,
 } from '@mui/material'
-import DonutLarge from '@mui/icons-material/DonutLarge'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import FileUploadIcon from '@mui/icons-material/FileUpload'
-import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import { useSnackbar } from 'notistack'
-import Add from '@mui/icons-material/Add'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import GlobalCard from '../components/GlobalCard'
+import ProgressAlert from '../components/ProgressAlert'
+import ProjectInfoDialog from '../components/ProjectInfoDialog'
+import SectionCard from '../components/SectionCard'
+import SectionDialog from '../components/SectionDialog'
 import {
+  importProjects,
+  renameProject,
   updateNotes,
   updatePatternUrl,
-  renameProject,
-  importProjects,
 } from '../features/projects/projectsSlice'
-import SectionCard from '../components/SectionCard'
-import GlobalCard from '../components/GlobalCard'
-import SectionDialog from '../components/SectionDialog'
-import ProjectInfoDialog from '../components/ProjectInfoDialog'
 import { useProjectStats } from '../hooks/useProjectStats'
-import ProgressAlert from '../components/ProgressAlert'
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()

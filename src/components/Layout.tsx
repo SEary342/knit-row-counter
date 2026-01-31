@@ -1,4 +1,12 @@
-import React from 'react'
+import BugReportIcon from '@mui/icons-material/BugReport'
+// Import
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+// Projects
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+// Export
+import GitHubIcon from '@mui/icons-material/GitHub'
+import HomeIcon from '@mui/icons-material/Home'
+import MenuIcon from '@mui/icons-material/Menu'
 import {
   AppBar,
   Box,
@@ -13,16 +21,13 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import HomeIcon from '@mui/icons-material/Home' // Projects
-import FileUploadIcon from '@mui/icons-material/FileUpload' // Import
-import FileDownloadIcon from '@mui/icons-material/FileDownload' // Export
-import GitHubIcon from '@mui/icons-material/GitHub'
-import BugReportIcon from '@mui/icons-material/BugReport'
-import { Link as RouterLink } from 'react-router-dom'
 import { SnackbarProvider, useSnackbar } from 'notistack'
+import React from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { importProjects } from '../features/projects/projectsSlice'
+
 import LogoIcon from './LogoIcon'
 import { LOGO_SVG_URL } from './logoData'
 

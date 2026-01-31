@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@mui/material'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import DonutLargeIcon from '@mui/icons-material/DonutLarge'
 import DonutSmallIcon from '@mui/icons-material/DonutSmall'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import GestureIcon from '@mui/icons-material/Gesture'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
-import GestureIcon from '@mui/icons-material/Gesture'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@mui/material'
+import { useState } from 'react'
+
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { toggleShowStitches } from '../features/ui/uiSlice'
 
@@ -87,7 +88,7 @@ const ProgressAlert = ({
       }
     >
       <Typography variant="subtitle1" onClick={() => setOpen(!open)} sx={{ cursor: 'pointer' }}>
-        Today's Progress
+        Today&apos;s Progress
       </Typography>
       <Collapse in={open}>
         <Typography variant="body2" component="div">

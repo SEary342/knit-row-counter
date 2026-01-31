@@ -1,8 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useProjectStats } from './useProjectStats'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { ProgressRecord } from '../features/progress/progressSlice'
 import type { Project } from '../features/projects/types'
+
+import { useProjectStats } from './useProjectStats'
 
 // Set a consistent "now" for testing purposes
 const MOCK_DATE_NOW = new Date('2023-10-27T12:00:00.000Z')

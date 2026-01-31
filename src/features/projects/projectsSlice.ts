@@ -1,6 +1,6 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { v4 } from 'uuid'
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { produce } from 'immer'
+import { v4 } from 'uuid'
 
 import type { Project, ProjectsState, SectionConfig } from './types'
 

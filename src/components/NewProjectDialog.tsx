@@ -1,5 +1,5 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material'
 import React from 'react'
-import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 
 interface NewProjectDialogProps {
   open: boolean

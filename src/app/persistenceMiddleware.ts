@@ -1,7 +1,8 @@
 import { type Middleware } from '@reduxjs/toolkit'
-import { type RootState } from './store'
 
 import { saveStateToStorage } from '../utils/localStorage'
+
+import { type RootState } from './store'
 
 const PERSISTED_SLICES: (keyof RootState)[] = ['projects', 'progress', 'ui']
 

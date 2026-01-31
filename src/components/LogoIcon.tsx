@@ -1,8 +1,9 @@
 import { SvgIcon, type SvgIconProps } from '@mui/material'
+
 import { LOGO_COLORS } from './logoData'
 
 const LogoIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props} viewBox="0 0 64 64">
+  <SvgIcon {...props} viewBox="0 0 64 64" data-testid="logo-icon-svg">
     {/* Ball of Yarn */}
     <circle cx="32" cy="32" r="20" fill={LOGO_COLORS.YARN_COLOR} />
     {/* Knitting Needle */}

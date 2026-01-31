@@ -1,14 +1,17 @@
-import { describe, it, expect, vi } from 'vitest'
+import type { SvgIconProps } from '@mui/material'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+
 import ProgressAlert from './ProgressAlert'
 
 vi.mock('../app/hooks', () => ({
   useAppDispatch: () => vi.fn(),
-  useAppSelector: (selector: (state: any) => any) => selector({ ui: { showStitches: true } }),
+  useAppSelector: (selector: (state: { ui: { showStitches: boolean } }) => unknown) =>
+    selector({ ui: { showStitches: true } }),
 }))
 
 vi.mock('@mui/icons-material/TrendingUp', () => ({
-  default: (props: any) => <svg data-testid="TrendingUpIcon" {...props} />,
+  default: (props: SvgIconProps) => <svg data-testid="TrendingUpIcon" {...props} />,
 }))
 
 describe('ProgressAlert', () => {

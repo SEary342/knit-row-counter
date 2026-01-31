@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Box,
   Button,
@@ -12,22 +13,22 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import React, { useMemo, useState, useRef, useEffect } from 'react'
 import {
   DataGrid,
-  type GridColDef,
   GridActionsCellItem,
+  type GridColDef,
   type GridToolbarProps,
 } from '@mui/x-data-grid'
-import DeleteIcon from '@mui/icons-material/Delete'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { type Project } from '../features/projects/types'
 import { deleteProgressRecord } from '../features/progress/progressSlice'
+import { type ProgressRecord } from '../features/progress/progressSlice'
+import { type Project } from '../features/projects/types'
+
 import ConfirmationDialog from './ConfirmationDialog'
 import FullscreenDataGrid from './FullscreenDataGrid'
 import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
-import { type ProgressRecord } from '../features/progress/progressSlice'
 
 const HistoryToolbar = (props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) => (
   <Box sx={{ display: 'flex', p: 1, px: 2, justifyContent: 'space-between', alignItems: 'center' }}>

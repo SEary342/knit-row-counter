@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, Stack, Typography, Box } from '@mui/material'
+import { Box, Card, CardActions, CardContent, Stack, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
 
 interface CounterCardProps {

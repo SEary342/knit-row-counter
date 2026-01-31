@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
-import SettingsIcon from '@mui/icons-material/Settings'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import SettingsIcon from '@mui/icons-material/Settings'
+import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { useState } from 'react'
 
-import type { SectionConfig } from '../features/projects/types'
-import { decrementRow, incrementRow, moveSection } from '../features/projects/projectsSlice'
-import type { DisplaySize } from '../types'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { decrementRow, incrementRow, moveSection } from '../features/projects/projectsSlice'
+import type { SectionConfig } from '../features/projects/types'
+import type { DisplaySize } from '../types'
 
-import CounterCircle from './CounterCircle'
 import CounterCard from './CounterCard'
+import CounterCircle from './CounterCircle'
 import SectionDialog from './SectionDialog'
 
 interface sectionCardProps {

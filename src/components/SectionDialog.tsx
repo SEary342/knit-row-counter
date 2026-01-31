@@ -1,3 +1,5 @@
+import LockIcon from '@mui/icons-material/Lock'
+import LockOpenIcon from '@mui/icons-material/LockOpen'
 import {
   Box,
   Button,
@@ -13,11 +15,8 @@ import {
   useTheme,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useAppDispatch } from '../app/hooks'
-import LockIcon from '@mui/icons-material/Lock'
-import LockOpenIcon from '@mui/icons-material/LockOpen'
 
-import type { SectionConfig } from '../features/projects/types'
+import { useAppDispatch } from '../app/hooks'
 import {
   addSection,
   deleteSection,
@@ -25,11 +24,12 @@ import {
   setLocked,
   updateSection,
 } from '../features/projects/projectsSlice'
-
-import LinkSwitch from './LinkSwitch'
-import ConfirmationDialog from './ConfirmationDialog'
-import PatternEditor from './PatternEditor'
+import type { SectionConfig } from '../features/projects/types'
 import { type PatternRowConfig } from '../features/projects/types'
+
+import ConfirmationDialog from './ConfirmationDialog'
+import LinkSwitch from './LinkSwitch'
+import PatternEditor from './PatternEditor'
 
 interface SectionDialogProps {
   section?: SectionConfig

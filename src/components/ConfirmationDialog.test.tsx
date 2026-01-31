@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import ConfirmationDialog from './ConfirmationDialog'
 
@@ -56,13 +56,7 @@ describe('ConfirmationDialog', () => {
   })
 
   it('displays custom confirm text and color', () => {
-    render(
-      <ConfirmationDialog
-        {...defaultProps}
-        confirmText="Delete"
-        confirmColor="error"
-      />,
-    )
+    render(<ConfirmationDialog {...defaultProps} confirmText="Delete" confirmColor="error" />)
 
     const confirmButton = screen.getByRole('button', { name: 'Delete' })
     expect(confirmButton).toBeInTheDocument()

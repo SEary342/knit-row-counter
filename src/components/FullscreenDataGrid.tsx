@@ -1,8 +1,8 @@
-import { useState, cloneElement, type ReactElement, Fragment } from 'react'
-import { Box, Dialog, IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import FullscreenIcon from '@mui/icons-material/Fullscreen'
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
+import { Box, Dialog, IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import type { DataGridProps } from '@mui/x-data-grid'
+import { Fragment, type ReactElement, cloneElement, useState } from 'react'
 
 interface FullscreenDataGridProps {
   children: ReactElement<DataGridProps>

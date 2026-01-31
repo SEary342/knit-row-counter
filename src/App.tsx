@@ -1,11 +1,11 @@
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
+import { useAppSelector } from './app/hooks'
 import Layout from './components/Layout'
 import ProjectPickerView from './pages/ProjectPickerView'
 import ProjectView from './pages/ProjectView'
-import { useAppSelector } from './app/hooks'
 
 export default function App() {
   const darkMode = useAppSelector((s) => s?.ui?.darkMode ?? true)

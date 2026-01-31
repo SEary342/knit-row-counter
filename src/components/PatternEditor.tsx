@@ -1,27 +1,29 @@
-import { useState, useEffect, type Dispatch, type SetStateAction, useRef } from 'react'
-import {
-  DataGrid,
-  type GridColDef,
-  type GridRowId,
-  GridActionsCellItem,
-  type GridRowModel,
-  type GridRowModesModel,
-  GridRowModes,
-  type GridEventListener,
-  type GridToolbarProps,
-  GridRowEditStopReasons,
-} from '@mui/x-data-grid'
-import { Box, Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
-import SaveIcon from '@mui/icons-material/Save'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import CancelIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import SaveIcon from '@mui/icons-material/Save'
+import { Box, Button, Typography } from '@mui/material'
+import {
+  DataGrid,
+  GridActionsCellItem,
+  type GridColDef,
+  type GridEventListener,
+  GridRowEditStopReasons,
+  type GridRowId,
+  type GridRowModel,
+  GridRowModes,
+  type GridRowModesModel,
+  type GridToolbarProps,
+} from '@mui/x-data-grid'
 import { nanoid } from 'nanoid'
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
+
 import type { PatternRowConfig } from '../features/projects/types'
+
 import FullscreenDataGrid from './FullscreenDataGrid'
 
 interface PatternRow {
@@ -44,9 +46,7 @@ declare module '@mui/x-data-grid' {
   }
 }
 
-interface EditToolbarProps extends GridToolbarProps {}
-
-function EditToolbar(props: EditToolbarProps) {
+function EditToolbar(props: GridToolbarProps) {
   const { setRows, setRowModesModel } = props
 
   const handleClick = () => {
@@ -176,6 +176,7 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
     })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const processRowUpdate = (newRow: GridRowModel, _oldRow: GridRowModel): Promise<PatternRow> => {
     const updatedRow = { ...(newRow as PatternRow), isNew: false }
     const newRows = rows.map((row) => (row.id === updatedRow.id ? updatedRow : row))

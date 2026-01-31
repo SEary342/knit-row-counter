@@ -1,6 +1,8 @@
 import { type Middleware, isAction } from '@reduxjs/toolkit'
+
 import { type RootState } from '../../app/store'
 import { calculateProjectStitches } from '../projects/projectsSlice'
+
 import { addProgressRecord } from './progressSlice'
 
 export const progressMiddleware: Middleware = (store) => (next) => (action) => {

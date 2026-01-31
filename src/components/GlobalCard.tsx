@@ -1,22 +1,22 @@
-import { useMemo, useState } from 'react'
-import { Box, IconButton, Tooltip } from '@mui/material'
-import SettingsIcon from '@mui/icons-material/Settings'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import SettingsIcon from '@mui/icons-material/Settings'
+import { Box, IconButton, Tooltip } from '@mui/material'
+import { useMemo, useState } from 'react'
 
-import type { Project } from '../features/projects/types'
+import { useAppDispatch } from '../app/hooks'
 import {
   calculateProjectStitches,
   calculateProjectTotalRows,
   decrementRow,
   incrementRow,
 } from '../features/projects/projectsSlice'
+import type { Project } from '../features/projects/types'
 import type { DisplaySize } from '../types'
-import { useAppDispatch } from '../app/hooks'
 
-import CounterCircle from './CounterCircle'
 import CounterCard from './CounterCard'
-import GlobalDialog from './GlobalDialog'
+import CounterCircle from './CounterCircle'
 import Fireworks from './Fireworks'
+import GlobalDialog from './GlobalDialog'
 
 interface globalCardProps {
   project: Project

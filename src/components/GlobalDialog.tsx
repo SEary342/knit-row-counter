@@ -11,8 +11,8 @@ import {
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import type { Project } from '../features/projects/types'
 import { resetProjectProgress, setTotalRows } from '../features/projects/projectsSlice'
+import type { Project } from '../features/projects/types'
 
 import ConfirmationDialog from './ConfirmationDialog'
 
