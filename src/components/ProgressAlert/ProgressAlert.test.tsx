@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import ProgressAlert from './ProgressAlert'
 
-vi.mock('../app/hooks', () => ({
+vi.mock('@src/app/hooks', () => ({
   useAppDispatch: () => vi.fn(),
   useAppSelector: (selector: (state: { ui: { showStitches: boolean } }) => unknown) =>
     selector({ ui: { showStitches: true } }),

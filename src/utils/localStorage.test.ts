@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { RootState } from '../app/store'
+import type { RootState } from '@src/app/store'
 
 import { loadStateFromStorage, saveStateToStorage } from './localStorage'
 

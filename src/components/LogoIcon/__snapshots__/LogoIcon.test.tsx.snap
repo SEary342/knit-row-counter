@@ -1,0 +1,44 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LogoIcon > matches the snapshot 1`] = `
+<DocumentFragment>
+  <svg
+    aria-hidden="true"
+    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+    data-testid="logo-icon-svg"
+    focusable="false"
+    viewBox="0 0 64 64"
+  >
+    <circle
+      cx="32"
+      cy="32"
+      fill="#5fadedff"
+      r="20"
+    />
+    <path
+      d="M12 52 L50 14"
+      stroke="#cd3f3fff"
+      stroke-linecap="round"
+      stroke-width="4"
+    />
+    <circle
+      cx="12"
+      cy="52"
+      fill="#cd3f3fff"
+      r="5"
+    />
+    <path
+      d="M52 52 L14 14"
+      stroke="#4cd62dff"
+      stroke-linecap="round"
+      stroke-width="4"
+    />
+    <path
+      d="M14 14 L10 10 C 6 6, 14 6, 18 10"
+      fill="none"
+      stroke="#4cd62dff"
+      stroke-width="4"
+    />
+  </svg>
+</DocumentFragment>
+`;

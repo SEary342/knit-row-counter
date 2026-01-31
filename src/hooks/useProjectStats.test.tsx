@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { ProgressRecord } from '../features/progress/progressSlice'
-import type { Project } from '../features/projects/types'
+import type { ProgressRecord } from '@src/features/progress/progressSlice'
+import type { Project } from '@src/features/projects/types'
 
 import { useProjectStats } from './useProjectStats'
 

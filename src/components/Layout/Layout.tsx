@@ -25,11 +25,11 @@ import { SnackbarProvider, useSnackbar } from 'notistack'
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { importProjects } from '../features/projects/projectsSlice'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
+import { importProjects } from '@src/features/projects/projectsSlice'
 
-import LogoIcon from './LogoIcon'
-import { LOGO_SVG_URL } from './logoData'
+import LogoIcon from '@comp/LogoIcon'
+import { LOGO_SVG_URL } from '@comp/util'
 
 const drawerWidth = 260
 

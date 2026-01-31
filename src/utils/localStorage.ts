@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import type { RootState } from '../app/store'
-import type { PatternRowConfig } from '../features/projects/types'
+import type { RootState } from '@src/app/store'
+import type { PatternRowConfig } from '@src/features/projects/types'
 
 /**
  * Migrates the projects slice from older formats to the current format.

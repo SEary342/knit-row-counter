@@ -3,20 +3,20 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { useMemo, useState } from 'react'
 
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch } from '@src/app/hooks'
 import {
   calculateProjectStitches,
   calculateProjectTotalRows,
   decrementRow,
   incrementRow,
-} from '../features/projects/projectsSlice'
-import type { Project } from '../features/projects/types'
-import type { DisplaySize } from '../types'
+} from '@src/features/projects/projectsSlice'
+import type { Project } from '@src/features/projects/types'
+import type { DisplaySize } from '@src/types'
 
-import CounterCard from './CounterCard'
-import CounterCircle from './CounterCircle'
-import Fireworks from './Fireworks'
-import GlobalDialog from './GlobalDialog'
+import CounterCard from '@comp/CounterCard'
+import CounterCircle from '@comp/CounterCircle'
+import Fireworks from '@comp/Fireworks'
+import GlobalDialog from '@comp/GlobalDialog'
 
 interface globalCardProps {
   project: Project

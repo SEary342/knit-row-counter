@@ -22,9 +22,9 @@ import {
 import { nanoid } from 'nanoid'
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
 
-import type { PatternRowConfig } from '../features/projects/types'
+import type { PatternRowConfig } from '@src/features/projects/types'
 
-import FullscreenDataGrid from './FullscreenDataGrid'
+import FullscreenDataGrid from '@comp/FullscreenDataGrid'
 
 interface PatternRow {
   id: GridRowId

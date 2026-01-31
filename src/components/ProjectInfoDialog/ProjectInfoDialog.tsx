@@ -21,14 +21,14 @@ import {
 } from '@mui/x-data-grid'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { deleteProgressRecord } from '../features/progress/progressSlice'
-import { type ProgressRecord } from '../features/progress/progressSlice'
-import { type Project } from '../features/projects/types'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
+import { deleteProgressRecord } from '@src/features/progress/progressSlice'
+import { type ProgressRecord } from '@src/features/progress/progressSlice'
+import { type Project } from '@src/features/projects/types'
 
-import ConfirmationDialog from './ConfirmationDialog'
-import FullscreenDataGrid from './FullscreenDataGrid'
-import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
+import ConfirmationDialog from '@comp/ConfirmationDialog'
+import FullscreenDataGrid from '@comp/FullscreenDataGrid'
+import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from '@comp/Heatmap'
 
 const HistoryToolbar = (props: GridToolbarProps & { FullscreenToggleButton?: React.ReactNode }) => (
   <Box sx={{ display: 'flex', p: 1, px: 2, justifyContent: 'space-between', alignItems: 'center' }}>

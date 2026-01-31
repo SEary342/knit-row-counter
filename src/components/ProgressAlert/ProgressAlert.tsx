@@ -9,8 +9,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { toggleShowStitches } from '../features/ui/uiSlice'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
+import { toggleShowStitches } from '@src/features/ui/uiSlice'
 
 interface ProgressAlertProps {
   rowsToday: number

@@ -16,20 +16,20 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch } from '@src/app/hooks'
 import {
   addSection,
   deleteSection,
   setLinked,
   setLocked,
   updateSection,
-} from '../features/projects/projectsSlice'
-import type { SectionConfig } from '../features/projects/types'
-import { type PatternRowConfig } from '../features/projects/types'
+} from '@src/features/projects/projectsSlice'
+import type { SectionConfig } from '@src/features/projects/types'
+import { type PatternRowConfig } from '@src/features/projects/types'
 
-import ConfirmationDialog from './ConfirmationDialog'
-import LinkSwitch from './LinkSwitch'
-import PatternEditor from './PatternEditor'
+import ConfirmationDialog from '@comp/ConfirmationDialog'
+import LinkSwitch from '@comp/LinkSwitch'
+import PatternEditor from '@comp/PatternEditor'
 
 interface SectionDialogProps {
   section?: SectionConfig

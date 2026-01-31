@@ -253,6 +253,7 @@ const Heatmap = ({
             {calendarData.map((item) => (
               <Tooltip key={item.date} title={`${item.count} ${verb} on ${item.date}`} arrow>
                 <Box
+                  data-testid={`heatmap-cell-${item.date}`}
                   sx={{
                     width: cellWidth,
                     height: cellWidth,

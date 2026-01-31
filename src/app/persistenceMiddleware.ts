@@ -1,17 +1,16 @@
 import { type Middleware } from '@reduxjs/toolkit'
 
-import { saveStateToStorage } from '../utils/localStorage'
+import { saveStateToStorage } from '@src/utils/localStorage'
 
-import { type RootState } from './store'
-
-const PERSISTED_SLICES: (keyof RootState)[] = ['projects', 'progress', 'ui']
+const PERSISTED_SLICES = ['projects', 'progress', 'ui'] as const
 
 export const persistenceMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action)
-  const state = store.getState()
+  const state = store.getState() as Record<string, unknown>
 
   PERSISTED_SLICES.forEach((slice) => {
-    saveStateToStorage(slice, state[slice])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    saveStateToStorage(slice, state[slice] as any)
   })
 
   return result

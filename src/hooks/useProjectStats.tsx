@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import type { ProgressRecord } from '../features/progress/progressSlice'
-import { calculateProjectTotalRows } from '../features/projects/projectsSlice'
-import type { Project } from '../features/projects/types'
+import type { ProgressRecord } from '@src/features/progress/progressSlice'
+import { calculateProjectTotalRows } from '@src/features/projects/projectsSlice'
+import type { Project } from '@src/features/projects/types'
 
 const HOUR = 60 * 60 * 1000
 

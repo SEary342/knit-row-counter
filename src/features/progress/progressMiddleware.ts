@@ -1,7 +1,7 @@
 import { type Middleware, isAction } from '@reduxjs/toolkit'
 
-import { type RootState } from '../../app/store'
-import { calculateProjectStitches } from '../projects/projectsSlice'
+import { type RootState } from '@src/app/store'
+import { calculateProjectStitches } from '@src/features/projects/projectsSlice'
 
 import { addProgressRecord } from './progressSlice'
 

@@ -18,19 +18,20 @@ import { useSnackbar } from 'notistack'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import GlobalCard from '../components/GlobalCard'
-import ProgressAlert from '../components/ProgressAlert'
-import ProjectInfoDialog from '../components/ProjectInfoDialog'
-import SectionCard from '../components/SectionCard'
-import SectionDialog from '../components/SectionDialog'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
 import {
   importProjects,
   renameProject,
   updateNotes,
   updatePatternUrl,
-} from '../features/projects/projectsSlice'
-import { useProjectStats } from '../hooks/useProjectStats'
+} from '@src/features/projects/projectsSlice'
+import { useProjectStats } from '@src/hooks/useProjectStats'
+
+import GlobalCard from '@comp/GlobalCard'
+import ProgressAlert from '@comp/ProgressAlert'
+import ProjectInfoDialog from '@comp/ProjectInfoDialog'
+import SectionCard from '@comp/SectionCard'
+import SectionDialog from '@comp/SectionDialog'
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>()

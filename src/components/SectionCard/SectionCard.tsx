@@ -5,14 +5,14 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { decrementRow, incrementRow, moveSection } from '../features/projects/projectsSlice'
-import type { SectionConfig } from '../features/projects/types'
-import type { DisplaySize } from '../types'
+import { useAppDispatch, useAppSelector } from '@src/app/hooks'
+import { decrementRow, incrementRow, moveSection } from '@src/features/projects/projectsSlice'
+import type { SectionConfig } from '@src/features/projects/types'
+import type { DisplaySize } from '@src/types'
 
-import CounterCard from './CounterCard'
-import CounterCircle from './CounterCircle'
-import SectionDialog from './SectionDialog'
+import CounterCard from '@comp/CounterCard'
+import CounterCircle from '@comp/CounterCircle'
+import SectionDialog from '@comp/SectionDialog'
 
 interface sectionCardProps {
   section: SectionConfig

@@ -6,7 +6,15 @@
   "tabWidth": 2,
   "endOfLine": "auto",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["<THIRD_PARTY_MODULES>", "^\\.\\./", "^\\./"],
+  "importOrder": [
+    "^(node:)?(path|fs|os|crypto|stream|util|events|buffer|assert)$",
+    "<THIRD_PARTY_MODULES>",
+    "^@src",
+    "^@comp",
+    "^\\.\\./",
+    "^\\./",
+    "^\\."
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

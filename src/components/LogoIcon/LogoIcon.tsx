@@ -1,6 +1,6 @@
 import { SvgIcon, type SvgIconProps } from '@mui/material'
 
-import { LOGO_COLORS } from './logoData'
+import { LOGO_COLORS } from '@comp/util'
 
 const LogoIcon = (props: SvgIconProps) => (
   <SvgIcon {...props} viewBox="0 0 64 64" data-testid="logo-icon-svg">

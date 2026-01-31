@@ -11,10 +11,10 @@ import {
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { resetProjectProgress, setTotalRows } from '../features/projects/projectsSlice'
-import type { Project } from '../features/projects/types'
+import { resetProjectProgress, setTotalRows } from '@src/features/projects/projectsSlice'
+import type { Project } from '@src/features/projects/types'
 
-import ConfirmationDialog from './ConfirmationDialog'
+import ConfirmationDialog from '@comp/ConfirmationDialog'
 
 interface GlobalDialogProps {
   project: Project
