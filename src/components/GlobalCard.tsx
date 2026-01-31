@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 import type { Project } from '../features/projects/types'
 import {
@@ -28,6 +29,9 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
 
   const calculatedTotalRows = useMemo(() => calculateProjectTotalRows(project), [project])
 
+  const maxRows = project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)
+  const isFinished = maxRows !== null && project.currentRow >= maxRows
+
   const totalStitches = calculateProjectStitches(project)
 
   const linkedSectionIds = project.sections
@@ -38,7 +42,16 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
 
   return (
     <CounterCard
-      title="Global"
+      title={
+        isFinished ? (
+          <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+            Global
+            <CheckCircleIcon color="success" fontSize="small" />
+          </Box>
+        ) : (
+          'Global'
+        )
+      }
       cardActions={
         <GlobalDialog
           project={project}
@@ -63,11 +76,12 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
         value={project.currentRow}
         onIncrement={() => dispatch(incrementRow(payload))}
         onDecrement={() => dispatch(decrementRow(payload))}
-        max={project.totalRows ?? (calculatedTotalRows > 0 ? calculatedTotalRows : null)}
+        max={maxRows}
         size={circleSize}
         showFraction={false}
         smallNote={totalStitches > 0 ? `Total Stitches: ${totalStitches.toLocaleString()}` : ''}
-        color="success"
+        color={isFinished ? 'success' : 'primary'}
+        isFinished={isFinished}
       />
     </CounterCard>
   )

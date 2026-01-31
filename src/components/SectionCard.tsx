@@ -3,6 +3,7 @@ import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 import type { SectionConfig } from '../features/projects/types'
 import { decrementRow, incrementRow, moveSection } from '../features/projects/projectsSlice'
@@ -39,8 +40,16 @@ const SectionCard = ({
       }
     : { sectionIndex: undefined, totalSections: undefined }
 
+  const isFinished =
+    !!section.totalRepeats &&
+    !!section.repeatRows &&
+    (section.repeatCount >= section.totalRepeats ||
+      (section.repeatCount === section.totalRepeats - 1 &&
+        section.currentRow === section.repeatRows))
+
   const repeatsNote = () => {
     if (!section) return 'No section configured'
+    if (isFinished) return 'Section Complete!'
     if (section.repeatRows && section.repeatRows > 0) {
       // Soft-increment to show completion of a repeat without altering state
       const displayRepeatCount =
@@ -71,7 +80,16 @@ const SectionCard = ({
 
   return (
     <CounterCard
-      title={section?.name}
+      title={
+        isFinished ? (
+          <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+            {section?.name}
+            <CheckCircleIcon color="success" fontSize="small" />
+          </Box>
+        ) : (
+          section?.name
+        )
+      }
       cardActions={
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
           <Box>
@@ -130,8 +148,9 @@ const SectionCard = ({
         size={circleSize}
         showFraction={true}
         smallNote={repeatsNote()}
-        color={section.linked ? 'secondary' : 'info'}
+        color={isFinished ? 'success' : section.linked ? 'secondary' : 'info'}
         disabled={section.locked ?? false}
+        isFinished={isFinished}
       />
     </CounterCard>
   )

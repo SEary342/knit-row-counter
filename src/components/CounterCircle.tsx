@@ -20,6 +20,7 @@ interface Props {
   smallNote?: string
   color?: CircularProgressProps['color']
   disabled?: boolean
+  isFinished?: boolean
 }
 
 export default function CounterCircle({
@@ -33,6 +34,7 @@ export default function CounterCircle({
   smallNote,
   color,
   disabled,
+  isFinished,
 }: Props) {
   const percent = max && max > 0 ? Math.min(100, Math.round((value / max) * 100)) : null
   const isMedium = size < 220
@@ -50,7 +52,8 @@ export default function CounterCircle({
         value={percent ?? 100}
         size={size}
         thickness={3}
-        color={color}
+        color={disabled ? 'inherit' : color}
+        sx={disabled ? { color: 'action.disabled' } : undefined}
       />
       <Box
         sx={{
@@ -90,7 +93,7 @@ export default function CounterCircle({
               onClick={onIncrement}
               aria-label="increment"
               size={isSmall ? 'small' : 'large'}
-              disabled={disabled}
+              disabled={disabled || isFinished}
             >
               <AddIcon fontSize={isSmall ? 'small' : isMedium ? 'medium' : 'large'} />
             </IconButton>

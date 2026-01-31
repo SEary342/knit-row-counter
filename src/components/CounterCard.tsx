@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, Stack, Typography, Box } from '@mui/mat
 import type { ReactNode } from 'react'
 
 interface CounterCardProps {
-  title?: string
+  title?: ReactNode
   children: ReactNode
   cardActions?: ReactNode
   footerContent?: ReactNode

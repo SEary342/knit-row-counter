@@ -48,6 +48,60 @@ export const calculateProjectTotalRows = (project: Project): number => {
   }, 0)
 }
 
+const handleAutoAdvance = (project: Project) => {
+  const linkedSections = project.sections.filter((s) => s.linked)
+  if (linkedSections.length !== 1) return
+
+  const currentSection = linkedSections[0]
+  if (!currentSection.totalRepeats || !currentSection.repeatRows) {
+    return
+  }
+
+  const isFinished =
+    currentSection.repeatCount >= currentSection.totalRepeats ||
+    (currentSection.repeatCount === currentSection.totalRepeats - 1 &&
+      currentSection.currentRow === currentSection.repeatRows)
+
+  if (!isFinished) {
+    return
+  }
+
+  const currentIndex = project.sections.findIndex((s) => s.id === currentSection.id)
+  const nextSection = project.sections[currentIndex + 1]
+
+  if (nextSection && !nextSection.locked) {
+    currentSection.linked = false
+    nextSection.linked = true
+  }
+}
+
+const handleAutoReverse = (project: Project): boolean => {
+  const linkedSections = project.sections.filter((s) => s.linked)
+  if (linkedSections.length !== 1) return false
+
+  const currentSection = linkedSections[0]
+  // Only reverse if we are at the very start of the section
+  if (currentSection.currentRow !== 0 || currentSection.repeatCount !== 0) return false
+
+  const currentIndex = project.sections.findIndex((s) => s.id === currentSection.id)
+  const prevSection = project.sections[currentIndex - 1]
+
+  if (prevSection && !prevSection.locked) {
+    currentSection.linked = false
+    prevSection.linked = true
+    // Inverse change: Decrement the previous section to step back from "Done" state
+    if (prevSection.currentRow > 0) {
+      prevSection.currentRow--
+      if (prevSection.repeatRows && prevSection.currentRow === 0 && prevSection.repeatCount > 0) {
+        prevSection.currentRow = prevSection.repeatRows
+        prevSection.repeatCount--
+      }
+    }
+    return true
+  }
+  return false
+}
+
 export const projectsSlice = createSlice({
   name: 'projects',
   initialState,
@@ -201,6 +255,8 @@ export const projectsSlice = createSlice({
         }
       }
 
+      handleAutoAdvance(project)
+
       project.lastModified = Date.now()
     },
 
@@ -212,6 +268,15 @@ export const projectsSlice = createSlice({
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
 
       if (targetSection?.locked) return
+
+      // Check for auto-reverse if we are operating on the linked set
+      if ((!targetSection || targetSection.linked) && handleAutoReverse(project)) {
+        if (project.currentRow > 0) {
+          project.currentRow--
+        }
+        project.lastModified = Date.now()
+        return
+      }
 
       const decrementLogic = (section: SectionConfig) => {
         if (section.currentRow > 0) {
