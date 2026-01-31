@@ -257,9 +257,9 @@ describe('ProjectView', () => {
       readAsText: vi.fn(),
       onload: null as ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null,
     }
-    const fileReaderSpy = vi
-      .spyOn(window, 'FileReader')
-      .mockImplementation(() => mockFileReader as unknown as FileReader)
+    const fileReaderSpy = vi.spyOn(window, 'FileReader').mockImplementation(function () {
+      return mockFileReader
+    } as unknown as () => FileReader)
 
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
     fireEvent.change(fileInput, { target: { files: [file] } })
@@ -286,9 +286,9 @@ describe('ProjectView', () => {
       readAsText: vi.fn(),
       onload: null as ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null,
     }
-    const fileReaderSpy = vi
-      .spyOn(window, 'FileReader')
-      .mockImplementation(() => mockFileReader as unknown as FileReader)
+    const fileReaderSpy = vi.spyOn(window, 'FileReader').mockImplementation(function () {
+      return mockFileReader
+    } as unknown as () => FileReader)
 
     fireEvent.change(fileInput, { target: { files: [new File([''], 'test')] } })
 
