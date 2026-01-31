@@ -13,6 +13,7 @@ export interface SectionConfig {
   totalRepeats: number | null
   pattern: PatternRowConfig[]
   stitchCount: number | null
+  locked: boolean | null
 }
 
 export interface Project {

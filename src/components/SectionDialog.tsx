@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Stack,
   TextField,
   Tooltip,
@@ -13,12 +14,15 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '../app/hooks'
+import LockIcon from '@mui/icons-material/Lock'
+import LockOpenIcon from '@mui/icons-material/LockOpen'
 
 import type { SectionConfig } from '../features/projects/types'
 import {
   addSection,
   deleteSection,
   setLinked,
+  setLocked,
   updateSection,
 } from '../features/projects/projectsSlice'
 
@@ -110,6 +114,10 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
     if (section) dispatch(setLinked({ id: section.id, status: !section.linked }))
   }
 
+  const handleLockClick = () => {
+    if (section) dispatch(setLocked({ id: section.id, status: !section.locked }))
+  }
+
   const handleDelete = () => {
     if (!section) return
     dispatch(deleteSection(section.id))
@@ -119,13 +127,32 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
 
   return (
     <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
-      {section && (
-        <>
-          <Tooltip title="Link/Unlink From Global Counter">
-            <LinkSwitch onClick={handleLinkClick} checked={section.linked ?? false} />
-          </Tooltip>
-        </>
-      )}
+      <Stack direction="row" alignItems="center">
+        {section && (
+          <>
+            <Tooltip title="Link/Unlink From Global Counter">
+              <span>
+                <LinkSwitch
+                  onClick={handleLinkClick}
+                  checked={section.linked ?? false}
+                  disabled={section.locked ?? false}
+                />
+              </span>
+            </Tooltip>
+            {!section.linked && (
+              <Tooltip title={section.locked ? 'Unlock Section' : 'Lock Section'}>
+                <IconButton onClick={handleLockClick}>
+                  {section.locked ? (
+                    <LockIcon fontSize="small" color="error" />
+                  ) : (
+                    <LockOpenIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
+        )}
+      </Stack>
       {trigger}
       <Dialog open={open} maxWidth="xs" fullWidth fullScreen={isMobile}>
         <DialogTitle>{section ? 'Edit Section' : 'Create Section'}</DialogTitle>

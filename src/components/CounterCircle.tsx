@@ -19,6 +19,7 @@ interface Props {
   showFraction?: boolean
   smallNote?: string
   color?: CircularProgressProps['color']
+  disabled?: boolean
 }
 
 export default function CounterCircle({
@@ -31,6 +32,7 @@ export default function CounterCircle({
   showFraction = true,
   smallNote,
   color,
+  disabled,
 }: Props) {
   const percent = max && max > 0 ? Math.min(100, Math.round((value / max) * 100)) : null
   const isMedium = size < 220
@@ -80,6 +82,7 @@ export default function CounterCircle({
               onClick={onDecrement}
               aria-label="decrement"
               size={isSmall ? 'small' : 'large'}
+              disabled={disabled}
             >
               <RemoveIcon fontSize={isSmall ? 'small' : isMedium ? 'medium' : 'large'} />
             </IconButton>
@@ -87,6 +90,7 @@ export default function CounterCircle({
               onClick={onIncrement}
               aria-label="increment"
               size={isSmall ? 'small' : 'large'}
+              disabled={disabled}
             >
               <AddIcon fontSize={isSmall ? 'small' : isMedium ? 'medium' : 'large'} />
             </IconButton>

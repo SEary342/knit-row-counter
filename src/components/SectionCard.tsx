@@ -131,6 +131,7 @@ const SectionCard = ({
         showFraction={true}
         smallNote={repeatsNote()}
         color={section.linked ? 'secondary' : 'info'}
+        disabled={section.locked ?? false}
       />
     </CounterCard>
   )

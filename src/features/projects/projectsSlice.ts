@@ -87,6 +87,12 @@ export const projectsSlice = createSlice({
       if (section) section.linked = action.payload.status
     },
 
+    setLocked: (state, action: PayloadAction<{ id: string; status: boolean }>) => {
+      const project = findProject(state)
+      const section = project?.sections.find((s) => s.id === action.payload.id)
+      if (section) section.locked = action.payload.status
+    },
+
     setTotalRows: (state, action: PayloadAction<number | null>) => {
       const project = findProject(state)
       if (project) {
@@ -107,6 +113,7 @@ export const projectsSlice = createSlice({
         stitchCount: action.payload.section.stitchCount ?? null,
         currentRow: 0,
         repeatCount: 0,
+        locked: action.payload.section.locked ?? null,
       }
       if (!section) return
 
@@ -169,6 +176,8 @@ export const projectsSlice = createSlice({
 
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
 
+      if (targetSection?.locked) return
+
       const incrementLogic = (section: SectionConfig) => {
         section.currentRow += 1
         if (section.repeatRows && section.currentRow > section.repeatRows) {
@@ -187,7 +196,7 @@ export const projectsSlice = createSlice({
       // Otherwise, increment the global counter and all linked sections.
       project.currentRow += 1
       for (const section of project.sections) {
-        if (section.linked) {
+        if (section.linked && !section.locked) {
           incrementLogic(section)
         }
       }
@@ -201,6 +210,8 @@ export const projectsSlice = createSlice({
       if (!project) return
 
       const targetSection = sectionId ? project.sections.find((s) => s.id === sectionId) : null
+
+      if (targetSection?.locked) return
 
       const decrementLogic = (section: SectionConfig) => {
         if (section.currentRow > 0) {
@@ -223,7 +234,7 @@ export const projectsSlice = createSlice({
       if (project.currentRow > 0) {
         project.currentRow--
         for (const section of project.sections) {
-          if (section.linked) {
+          if (section.linked && !section.locked) {
             decrementLogic(section)
           }
         }
@@ -239,6 +250,7 @@ export const projectsSlice = createSlice({
       project.currentRow = 0
 
       for (const section of project.sections) {
+        section.locked = false
         section.currentRow = 0
         section.repeatCount = 0
       }
@@ -278,6 +290,7 @@ export const {
   deleteProject,
   renameProject,
   setLinked,
+  setLocked,
   incrementRow,
   setTotalRows,
   decrementRow,
