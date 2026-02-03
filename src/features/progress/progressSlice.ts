@@ -1,18 +1,7 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
-export interface ProgressRecord {
-  id: string
-  projectId: string
-  sectionId: string
-  timestamp: number
-  rowsDelta: number
-  stitchesDelta: number
-}
-
-interface ProgressState {
-  records: ProgressRecord[]
-}
+import type { ProgressRecord, ProgressState } from './types'
 
 const initialState: ProgressState = {
   records: [],

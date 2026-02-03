@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import type { ProgressRecord } from '@src/features/progress/progressSlice'
+import type { ProgressRecord } from '@src/features/progress/types'
 import { calculateProjectTotalRows } from '@src/features/projects/projectsSlice'
 import type { Project } from '@src/features/projects/types'
 
