@@ -23,7 +23,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@src/app/hooks'
 import { deleteProgressRecord } from '@src/features/progress/progressSlice'
-import { type ProgressRecord } from '@src/features/progress/progressSlice'
+import type { ProgressRecord } from '@src/features/progress/types'
 import { type Project } from '@src/features/projects/types'
 
 import ConfirmationDialog from '@comp/ConfirmationDialog'
