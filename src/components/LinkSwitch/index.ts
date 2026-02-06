@@ -1,4 +1,1 @@
-import LinkSwitch from './LinkSwitch'
-
-export default LinkSwitch
-export { LinkSwitch }
+export { default } from './LinkSwitch'

@@ -1,4 +1,1 @@
-import PatternEditor from './PatternEditor'
-
-export default PatternEditor
-export { PatternEditor }
+export { default } from './PatternEditor'

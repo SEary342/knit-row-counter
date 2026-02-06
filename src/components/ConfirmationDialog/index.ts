@@ -1,4 +1,1 @@
-import ConfirmationDialog from './ConfirmationDialog'
-
-export default ConfirmationDialog
-export { ConfirmationDialog }
+export { default } from './ConfirmationDialog'

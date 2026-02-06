@@ -1,4 +1,1 @@
-import GlobalDialog from './GlobalDialog'
-
-export default GlobalDialog
-export { GlobalDialog }
+export { default } from './GlobalDialog'

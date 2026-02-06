@@ -1,4 +1,1 @@
-import NewProjectDialog from './NewProjectDialog'
-
-export default NewProjectDialog
-export { NewProjectDialog }
+export { default } from './NewProjectDialog'

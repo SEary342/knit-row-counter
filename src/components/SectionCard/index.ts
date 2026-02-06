@@ -1,4 +1,1 @@
-import SectionCard from './SectionCard'
-
-export default SectionCard
-export { SectionCard }
+export { default } from './SectionCard'
