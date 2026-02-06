@@ -1,4 +1,1 @@
-import CounterCircle from './CounterCircle'
-
-export default CounterCircle
-export { CounterCircle }
+export { default } from './CounterCircle'

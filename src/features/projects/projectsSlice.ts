@@ -102,7 +102,7 @@ const handleAutoReverse = (project: Project): boolean => {
   return false
 }
 
-export const projectsSlice = createSlice({
+const projectsSlice = createSlice({
   name: 'projects',
   initialState,
   reducers: {

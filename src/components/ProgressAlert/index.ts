@@ -1,4 +1,1 @@
-import ProgressAlert from './ProgressAlert'
-
-export default ProgressAlert
-export { ProgressAlert }
+export { default } from './ProgressAlert'

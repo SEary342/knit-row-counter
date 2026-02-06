@@ -1,20 +1,8 @@
 import { Box, Tooltip, Typography, alpha, useMediaQuery, useTheme } from '@mui/material'
 import { type ReactNode, useMemo } from 'react'
 
-export interface HeatmapData {
-  date: string // YYYY-MM-DD
-  count: number
-}
-
-export const formatLocalDate = (date: Date): string => {
-  const year = date.getFullYear()
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-const cellWidth = 12
-const gap = 4
+import type { HeatmapData } from './types'
+import { cellWidth, formatLocalDate, gap } from './util'
 
 const generateYearData = (inputData: HeatmapData[] = [], maxDays: number = 365) => {
   const today = new Date()
@@ -37,27 +25,6 @@ const generateYearData = (inputData: HeatmapData[] = [], maxDays: number = 365) 
     })
   }
   return days
-}
-
-export const calculateMaxDaysForWidth = (width: number) => {
-  const weekWidth = cellWidth + gap // 16
-
-  // Add a safety margin (5px) to prevent sub-pixel rounding errors from causing overflow.
-  const horizontalPadding = 91
-
-  // Calculate the space available for the grid
-  const gridWidthAvailable = width - horizontalPadding
-
-  if (gridWidthAvailable <= 0) {
-    return 7 // Return one week minimum
-  }
-
-  // Calculate number of whole weeks that fit.
-  const weeks = Math.floor(gridWidthAvailable / weekWidth)
-
-  const calculatedMaxDays = weeks * 7
-
-  return Math.max(calculatedMaxDays, 7)
 }
 
 // --- Heatmap Component ---

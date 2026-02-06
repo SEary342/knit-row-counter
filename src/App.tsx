@@ -3,7 +3,7 @@ import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { useAppSelector } from './app/hooks'
-import Layout from './components/Layout/Layout'
+import Layout from './components/Layout'
 import ProjectPickerView from './pages/ProjectPickerView'
 import ProjectView from './pages/ProjectView'
 

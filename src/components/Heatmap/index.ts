@@ -1,4 +1,3 @@
-import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
+export { default } from './Heatmap'
 
-export default Heatmap
-export { Heatmap, calculateMaxDaysForWidth, formatLocalDate }
+export { formatLocalDate, calculateMaxDaysForWidth } from './util'

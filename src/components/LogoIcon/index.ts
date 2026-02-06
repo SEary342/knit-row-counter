@@ -1,4 +1,1 @@
-import LogoIcon from './LogoIcon'
-
-export default LogoIcon
-export { LogoIcon }
+export { default } from './LogoIcon'

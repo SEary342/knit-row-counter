@@ -1,4 +1,1 @@
-import Fireworks from './Fireworks'
-
-export default Fireworks
-export { Fireworks }
+export { default } from './Fireworks'
