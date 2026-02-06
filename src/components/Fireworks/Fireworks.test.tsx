@@ -4,23 +4,29 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Fireworks from './Fireworks'
 
 describe('Fireworks', () => {
-  let contextMock: Partial<CanvasRenderingContext2D> & {
-    globalCompositeOperation?: string
-    fillStyle?: string
-    fillRect?: (...args: unknown[]) => void
-    beginPath?: (...args: unknown[]) => void
-    arc?: (...args: unknown[]) => void
-    fill?: (...args: unknown[]) => void
+  // Define a type that maps the keys we care about to Vitest Mocks
+  type ContextMock = {
+    [K in keyof CanvasRenderingContext2D]?: CanvasRenderingContext2D[K] & {
+      mock: { calls: unknown[][] }
+    }
+  } & {
+    globalCompositeOperation: string
+    fillStyle: string | CanvasGradient | CanvasPattern
   }
+
+  let contextMock: ContextMock
 
   beforeEach(() => {
     vi.useFakeTimers()
+
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      return setTimeout(cb, 16) as unknown as number
+      return setTimeout(() => cb(performance.now()), 16) as unknown as number
     })
+
     vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
-      clearTimeout(id)
+      clearTimeout(id as unknown as number)
     })
+
     contextMock = {
       globalCompositeOperation: 'source-over',
       fillStyle: '#000',
@@ -28,9 +34,11 @@ describe('Fireworks', () => {
       beginPath: vi.fn(),
       arc: vi.fn(),
       fill: vi.fn(),
-    }
+      clearRect: vi.fn(),
+    } as unknown as ContextMock
+
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
-      contextMock as CanvasRenderingContext2D,
+      contextMock as unknown as CanvasRenderingContext2D,
     )
   })
 
@@ -56,7 +64,6 @@ describe('Fireworks', () => {
 
   it('initializes canvas context and starts animation loop', () => {
     render(<Fireworks />)
-
     expect(HTMLCanvasElement.prototype.getContext).toHaveBeenCalledWith('2d')
     expect(window.requestAnimationFrame).toHaveBeenCalled()
   })
@@ -64,10 +71,12 @@ describe('Fireworks', () => {
   it('handles resize events', () => {
     const { container } = render(<Fireworks />)
     const canvas = container.querySelector('canvas') as HTMLCanvasElement
+    const parent = canvas.parentElement
 
-    // Mock parent element dimensions
-    Object.defineProperty(canvas.parentElement, 'clientWidth', { value: 500, configurable: true })
-    Object.defineProperty(canvas.parentElement, 'clientHeight', { value: 300, configurable: true })
+    if (parent) {
+      Object.defineProperty(parent, 'clientWidth', { value: 500, configurable: true })
+      Object.defineProperty(parent, 'clientHeight', { value: 300, configurable: true })
+    }
 
     act(() => {
       window.dispatchEvent(new Event('resize'))
@@ -77,7 +86,7 @@ describe('Fireworks', () => {
     expect(canvas.height).toBe(300)
   })
 
-  it('cleans up on unmount', () => {
+  it('cleans up on unmount and clears canvas', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener')
     const { unmount } = render(<Fireworks />)
 
@@ -85,25 +94,41 @@ describe('Fireworks', () => {
 
     expect(window.cancelAnimationFrame).toHaveBeenCalled()
     expect(removeEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function))
+    expect(contextMock.clearRect).toHaveBeenCalled()
   })
 
   it('creates explosions and draws particles', () => {
-    // Mock Math.random to ensure explosion triggers (value < 0.05)
     vi.spyOn(Math, 'random').mockReturnValue(0.01)
 
     render(<Fireworks />)
 
-    // Advance time to allow animation frame to run
     act(() => {
       vi.advanceTimersByTime(50)
     })
 
-    // Check if canvas was cleared (trail effect)
     expect(contextMock.fillRect).toHaveBeenCalled()
-
-    // Check if particles were drawn
     expect(contextMock.beginPath).toHaveBeenCalled()
     expect(contextMock.arc).toHaveBeenCalled()
     expect(contextMock.fill).toHaveBeenCalled()
+  })
+
+  it('finishes animation before clearing', () => {
+    const duration = 500
+    render(<Fireworks duration={duration} />)
+
+    // Advance past duration, but particles still have alpha > 0
+    act(() => {
+      vi.advanceTimersByTime(600)
+    })
+
+    // Should still be animating if particles are alive
+    expect(contextMock.clearRect).not.toHaveBeenCalled()
+
+    // Advance enough for alpha to hit 0 (approx 1 second)
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(contextMock.clearRect).toHaveBeenCalled()
   })
 })

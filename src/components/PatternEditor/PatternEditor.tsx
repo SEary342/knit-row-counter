@@ -20,7 +20,7 @@ import {
   type GridToolbarProps,
 } from '@mui/x-data-grid'
 import { nanoid } from 'nanoid'
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 
 import type { PatternRowConfig } from '@src/features/projects/types'
 
@@ -82,21 +82,28 @@ function EditToolbar(props: GridToolbarProps) {
 }
 
 const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
-  const [rows, setRows] = useState<PatternRow[]>([])
+  const [rows, setRows] = useState<PatternRow[]>(() =>
+    value.map((row) => ({ id: nanoid(), ...row })),
+  )
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({})
-  const isInternalUpdate = useRef(false)
+  const [prevValue, setPrevValue] = useState(value)
 
-  useEffect(() => {
-    if (isInternalUpdate.current) {
-      isInternalUpdate.current = false
-      return
+  if (value !== prevValue) {
+    setPrevValue(value)
+
+    const isSynced =
+      rows.length === value.length &&
+      rows.every(
+        (row, index) =>
+          row.instruction === value[index].instruction && row.stitches === value[index].stitches,
+      )
+
+    if (!isSynced) {
+      setRows(value.map((row) => ({ id: nanoid(), ...row })))
     }
-    const syncedRows = value.map((row) => ({ id: nanoid(), ...row }))
-    setRows(syncedRows)
-  }, [value])
+  }
 
   const updateExternalState = (updatedRows: PatternRow[]) => {
-    isInternalUpdate.current = true
     onChange(updatedRows.map(({ instruction, stitches }) => ({ instruction, stitches })))
   }
 

@@ -2,7 +2,8 @@ import { useMediaQuery } from '@mui/material'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
+import Heatmap from './Heatmap'
+import { calculateMaxDaysForWidth, formatLocalDate } from './util'
 
 // Mock useMediaQuery to control mobile/desktop view in tests
 vi.mock('@mui/material', async (importOriginal) => {
