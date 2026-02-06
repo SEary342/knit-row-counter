@@ -43,7 +43,7 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
 
   return (
     <Box position="relative" height="100%">
-      {isFinished && <Fireworks />}
+      {isFinished && <Fireworks duration={10000} />}
       <CounterCard
         title={
           isFinished ? (

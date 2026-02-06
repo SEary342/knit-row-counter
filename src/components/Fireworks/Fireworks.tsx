@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const Fireworks = () => {
+const Fireworks = ({ duration = 3000 }: { duration?: number }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -10,6 +10,7 @@ const Fireworks = () => {
     if (!ctx) return
 
     let animationFrameId: number
+    const startTime = performance.now()
     const particles: {
       x: number
       y: number
@@ -35,24 +36,27 @@ const Fireworks = () => {
       }
     }
 
-    const loop = () => {
-      // Clear canvas slightly to create trail effect
+    const loop = (timestamp: number) => {
+      const elapsed = timestamp - startTime
+      const isSpawning = elapsed < duration
+      const hasParticles = particles.length > 0
+
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.10)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx.globalCompositeOperation = 'source-over'
 
-      // Random explosions
-      if (Math.random() < 0.05) {
+      // 2. Spawn explosions only during the duration
+      if (isSpawning && Math.random() < 0.05) {
         createExplosion(Math.random() * canvas.width, Math.random() * canvas.height * 0.8)
       }
 
-      // Update particles
+      // 3. Update particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i]
         p.x += p.vx
         p.y += p.vy
-        p.vy += 0.05 // Gravity
+        p.vy += 0.05
         p.alpha -= 0.02
 
         if (p.alpha <= 0) {
@@ -66,7 +70,11 @@ const Fireworks = () => {
         }
       }
 
-      animationFrameId = requestAnimationFrame(loop)
+      if (isSpawning || hasParticles) {
+        animationFrameId = requestAnimationFrame(loop)
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+      }
     }
 
     const handleResize = () => {
@@ -78,13 +86,15 @@ const Fireworks = () => {
 
     window.addEventListener('resize', handleResize)
     handleResize()
-    loop()
+    animationFrameId = requestAnimationFrame(loop)
 
     return () => {
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationFrameId)
+      // Ensure canvas is empty if component unmounts mid-animation
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
-  }, [])
+  }, [duration])
 
   return (
     <canvas
