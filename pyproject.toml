@@ -9,6 +9,7 @@ dependencies = [
     "fastapi[standard]",
     "itsdangerous>=2.2.0",
     "pyjwt[crypto]>=2.11.0",
+    "python-keycloak>=7.0.3",
     "qrcode[pil]>=8.2",
     "sqladmin>=0.21.0",
     "sqlalchemy>=2.0.46",
