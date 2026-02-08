@@ -5,6 +5,7 @@ from backend.core.admin import (
     PatternRowAdmin,
     ProgressRecordAdmin,
 )
+from backend.core.auth import auth_router, authentication_backend
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqladmin import Admin
@@ -34,8 +35,10 @@ app = FastAPI(
 
 # Include your modular routers
 app.include_router(api_router, prefix="/api/v1")
+# Include auth routes (for OAuth callbacks in production)
+app.include_router(auth_router)
 
-admin = Admin(app, engine)
+admin = Admin(app, engine, authentication_backend=authentication_backend)
 
 
 admin.add_view(UserAdmin)
