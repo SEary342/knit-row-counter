@@ -1,11 +1,14 @@
+from backend.core.admin import (
+    UserAdmin,
+    ProjectAdmin,
+    SectionAdmin,
+    PatternRowAdmin,
+    ProgressRecordAdmin,
+)
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqladmin import Admin
 
-# Import models EXPLICITLY to register them with SQLModel/SQLAlchemy
-from backend.models.user import User  # noqa: F401
-from backend.models.project import Project, Section  # noqa: F401
-from backend.models.progress import ProgressRecord  # noqa: F401
 
 # from backend.core.admin import ProjectAdmin, SectionAdmin, UserAdmin
 from .api.v1.api import api_router
@@ -34,11 +37,12 @@ app.include_router(api_router, prefix="/api/v1")
 
 admin = Admin(app, engine)
 
-# TODO get admin online
-# Register your models
-# admin.add_view(UserAdmin)
-# admin.add_view(ProjectAdmin)
-# admin.add_view(SectionAdmin)
+
+admin.add_view(UserAdmin)
+admin.add_view(ProjectAdmin)
+admin.add_view(SectionAdmin)
+admin.add_view(PatternRowAdmin)
+admin.add_view(ProgressRecordAdmin)
 
 
 @app.get("/")
