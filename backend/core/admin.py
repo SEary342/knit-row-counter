@@ -1,7 +1,5 @@
 from sqladmin import ModelView
-
-from backend.models.project import Project, Section
-from backend.models.user import User
+from backend.models import User, Project, Section, PatternRow, ProgressRecord
 
 
 class UserAdmin(ModelView, model=User):
@@ -12,7 +10,7 @@ class UserAdmin(ModelView, model=User):
 
 class ProjectAdmin(ModelView, model=Project):
     column_list = [Project.id, Project.name, Project.last_modified]
-    column_filters = [Project.name]
+    column_searchable_list = [Project.name]
     icon = "fa-solid fa-sheet-plastic"
 
 
@@ -21,4 +19,11 @@ class SectionAdmin(ModelView, model=Section):
     icon = "fa-solid fa-layer-group"
 
 
-# Add more views as needed for PatternRow and ProgressRecord
+class PatternRowAdmin(ModelView, model=PatternRow):
+    column_list = [PatternRow.id, PatternRow.instruction, PatternRow.order]
+    icon = "fa-solid fa-list-ol"
+
+
+class ProgressRecordAdmin(ModelView, model=ProgressRecord):
+    column_list = [ProgressRecord.id, ProgressRecord.timestamp]
+    icon = "fa-solid fa-chart-line"
