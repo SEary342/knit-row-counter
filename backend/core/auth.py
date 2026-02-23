@@ -66,6 +66,8 @@ if os.getenv("ENVIRONMENT") == "production":
         auth_url = keycloak_openid.auth_url(
             redirect_uri=os.getenv("KEYCLOAK_REDIRECT_URI", "")
         )
+        # Fix for Docker: Browser needs localhost, but Backend needs container name
+        auth_url = auth_url.replace("keycloak:8080", "localhost:8080")
         return RedirectResponse(auth_url)
 
     @auth_router.get("/auth/callback")
