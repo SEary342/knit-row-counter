@@ -1,15 +1,12 @@
 services:
   frontend:
-    # Development Configuration
-    # To switch to Production:
-    # 1. Update dockerfile to: Dockerfile.frontend
-    # 2. Update ports to: "3000:80"
-    # 3. Remove the 'volumes' section entirely
+    # Development configuration. For production, use:
+    # docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:5173"
+      - "3000:80"
     volumes:
       - .:/app
       - /app/node_modules
