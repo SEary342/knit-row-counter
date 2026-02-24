@@ -31,6 +31,8 @@ import { importProjects } from '@src/features/projects/projectsSlice'
 import LogoIcon from '@comp/LogoIcon'
 import { LOGO_SVG_URL } from '@comp/util'
 
+import LoginControl from './LoginControl'
+
 const drawerWidth = 260
 
 function AppLayout({ children }: { children: React.ReactNode }) {
@@ -89,9 +91,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             <MenuIcon />
           </IconButton>
           <LogoIcon sx={{ mr: 1 }} />
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Knit Row Counter
           </Typography>
+          <LoginControl />
         </Toolbar>
       </AppBar>
 

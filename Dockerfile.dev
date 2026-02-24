@@ -1,0 +1,12 @@
+FROM node:24-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+ENV VITE_ENABLE_AUTH=true
+ENV VITE_BASE_PATH=/
+
+CMD ["npm", "run", "dev"]
