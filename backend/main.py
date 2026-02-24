@@ -1,3 +1,5 @@
+from starlette.middleware.sessions import SessionMiddleware
+import os
 from backend.core.admin import (
     UserAdmin,
     ProjectAdmin,
@@ -31,6 +33,12 @@ app = FastAPI(
     description="Async API for managing knitting patterns and progress",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    SessionMiddleware,  # type: ignore
+    secret_key=os.getenv("SECRET_KEY", "supersecret"),
+    session_cookie="knit_session",
 )
 
 # Include your modular routers

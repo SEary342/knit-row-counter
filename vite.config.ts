@@ -6,7 +6,9 @@ import { defineConfig } from 'vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/',
+  base:
+    process.env.VITE_BASE_PATH ||
+    (process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/'),
   resolve: {
     alias: {
       '@src': resolve(__dirname, './src'),
@@ -17,6 +19,18 @@ export default defineConfig({
   define: {
     'process.env': {},
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+  },
+  server: {
+    host: true,
+    port: 5173,
+    watch: {
+      usePolling: true,
+    },
+    proxy: {
+      '/api': 'http://backend:80',
+      '/auth': 'http://backend:80',
+      '/admin': 'http://backend:80',
+    },
   },
   test: {
     globals: true,
