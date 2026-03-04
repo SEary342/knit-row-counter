@@ -26,33 +26,59 @@ const calculateTodayStats = (projectRecords: ProgressRecord[]) => {
 
 const twoDigitRound = (num: number) => Math.round(num * 100) / 100
 
-/**
- * Calculates the recent knitting speed in rows/hour and stitches/hour.
- * Speed is based on the records from the last hour.
- * @param projectRecords - All progress records for a single project, sorted by timestamp.
- * @returns An object with `rowsPerHour` and `stitchesPerHour`.
- */
+const getRecentRecords = (projectRecords: ProgressRecord[], timeBasis: number, now: number) => {
+  // 1. Filter once for the max possible window (24h) to avoid recursive filtering
+  const maxPast = 12 * HOUR
+  const maxWindow = now - maxPast
+  const candidateRecords = projectRecords
+    .filter((r) => r.timestamp >= maxWindow)
+    .sort((a, b) => a.timestamp - b.timestamp)
+
+  // 2. Helper to find records within a specific sliding window
+  const findInWindow = (windowMs: number): { records: ProgressRecord[]; actualBasis: number } => {
+    const cutoff = now - windowMs
+    const filtered = candidateRecords.filter((r) => r.timestamp >= cutoff)
+
+    // If we have at least 2 records to compare, or we hit the 24h limit
+    if (filtered.length >= 2 || windowMs >= maxPast) {
+      return { records: filtered, actualBasis: windowMs }
+    }
+    // Otherwise, expand the search by 1 hour
+    return findInWindow(windowMs + HOUR)
+  }
+
+  return findInWindow(timeBasis)
+}
+
 const calculateSpeed = (projectRecords: ProgressRecord[]) => {
-  // Use records from the last hour for speed calculation
   const now = Date.now()
-  const recentRecords = projectRecords.filter((r) => r.timestamp >= now - HOUR)
+  const { records: recentRecords } = getRecentRecords(projectRecords, HOUR, now)
+
   let rowsPerHour = 0
   let stitchesPerHour = 0
 
-  if (recentRecords.length > 1) {
-    const timeSpanHours =
-      (recentRecords[recentRecords.length - 1].timestamp - recentRecords[0].timestamp) / HOUR
+  if (recentRecords.length >= 2) {
+    const firstReq = recentRecords[0]
+    const lastRec = recentRecords[recentRecords.length - 1]
 
-    if (timeSpanHours > 0) {
-      // The first record is the baseline, so we sum the deltas of the subsequent records
+    // Calculate actual time elapsed in hours
+    const durationMs = lastRec.timestamp - firstReq.timestamp
+    const durationHours = durationMs / HOUR
+
+    if (durationHours > 0) {
+      // Sum deltas (excluding the first record if it's strictly a baseline)
       const totalRows = recentRecords.slice(1).reduce((sum, r) => sum + r.rowsDelta, 0)
       const totalStitches = recentRecords.slice(1).reduce((sum, r) => sum + r.stitchesDelta, 0)
-      rowsPerHour = totalRows / timeSpanHours
-      stitchesPerHour = totalStitches / timeSpanHours
+
+      rowsPerHour = totalRows / durationHours
+      stitchesPerHour = totalStitches / durationHours
     }
   }
 
-  return { rowsPerHour, stitchesPerHour }
+  return {
+    rowsPerHour: twoDigitRound(rowsPerHour),
+    stitchesPerHour: twoDigitRound(stitchesPerHour),
+  }
 }
 
 /**
