@@ -38,7 +38,9 @@ app = FastAPI(
 app.add_middleware(
     SessionMiddleware,  # type: ignore
     secret_key=os.getenv("SECRET_KEY", "supersecret"),
-    session_cookie="knit_session",
+    session_cookie="knit_session",  # Ensure this name matches everywhere
+    same_site="lax",
+    https_only=False,
 )
 
 # Include your modular routers

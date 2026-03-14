@@ -29,6 +29,7 @@ describe('store', () => {
     expect(state).toHaveProperty('projects')
     expect(state).toHaveProperty('progress')
     expect(state).toHaveProperty('ui')
+    expect(state).toHaveProperty('api')
   })
 
   it('projects slice is initialized', () => {

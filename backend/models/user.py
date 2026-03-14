@@ -11,6 +11,9 @@ class User(SQLModel, table=True):
     identity_id: str = Field(index=True, unique=True)
     email: str
     username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    display_name: Optional[str] = None
 
     projects: List["Project"] = Relationship(
         back_populates="owner", sa_relationship_kwargs={"lazy": "selectin"}
