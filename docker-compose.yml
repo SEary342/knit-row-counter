@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:80"
+      - '3000:80'
     volumes:
       - .:/app
       - /app/node_modules
@@ -18,27 +18,50 @@ services:
   backend:
     build: .
     ports:
-      - "8000:80"
+      - '8000:80'
+    # Enable live reload for backend code changes during development.
+    # We mount the host backend source into the container, but keep the
+    # virtualenv from the image (so we don't have to reinstall on every change).
+    volumes:
+      - ./backend:/backend/backend:delegated
+    command:
+      [
+        '/backend/.venv/bin/fastapi',
+        'run',
+        'backend/main.py',
+        '--port',
+        '80',
+        '--host',
+        '0.0.0.0',
+        '--reload',
+      ]
     environment:
       - ENVIRONMENT=production
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-app:5432/${POSTGRES_DB}
-      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_URL=http://localhost:8080
       - KEYCLOAK_CLIENT_ID=knit-app
       - KEYCLOAK_REALM=knit-realm
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_REDIRECT_URI=http://localhost:3000/auth/callback
+      - FRONTEND_URL=http://localhost:3000
       - ADMIN_USERNAME=${ADMIN_USERNAME}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
     extra_hosts:
-      - "localhost:host-gateway"
+      - 'localhost:host-gateway'
     depends_on:
       db-app:
         condition: service_healthy
       keycloak:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "/backend/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:80')"]
+      test:
+        [
+          'CMD',
+          '/backend/.venv/bin/python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:80')",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -46,13 +69,14 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    entrypoint: /bin/sh -c
-    # Added 'mkdir -p' to ensure the destination directory exists
-    command: >
-      "mkdir -p /opt/keycloak/data/import &&
-      cp /tmp/realm-export.json /opt/keycloak/data/import/realm.json &&
-      sed -i 's|\$${KEYCLOAK_CLIENT_SECRET}|'"$$KEYCLOAK_CLIENT_SECRET"'|g' /opt/keycloak/data/import/realm.json &&
-      /opt/keycloak/bin/kc.sh start-dev --import-realm"
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /opt/keycloak/data/import &&
+        cp /tmp/realm-export.json /opt/keycloak/data/import/realm.json &&
+        sed -i "s|\\$${KEYCLOAK_CLIENT_SECRET}|$$KEYCLOAK_CLIENT_SECRET|g" /opt/keycloak/data/import/realm.json &&
+        /opt/keycloak/bin/kc.sh start-dev --import-realm
     environment:
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
@@ -63,12 +87,17 @@ services:
       - KC_DB_PASSWORD=${POSTGRES_PASSWORD}
       - KC_HOSTNAME_STRICT=false
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./realm-export.json:/tmp/realm-export.json
     depends_on:
       db-keycloak:
         condition: service_healthy
+    healthcheck:
+      test: ['CMD', '/bin/bash', '-c', 'echo > /dev/tcp/127.0.0.1/8080']
+      interval: 10s
+      timeout: 5s
+      retries: 10
     restart: always
 
   db-app:
@@ -80,7 +109,7 @@ services:
     volumes:
       - postgres_app_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -95,7 +124,7 @@ services:
     volumes:
       - postgres_keycloak_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d keycloak_db"]
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d keycloak_db']
       interval: 5s
       timeout: 5s
       retries: 5

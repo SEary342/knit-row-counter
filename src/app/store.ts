@@ -4,6 +4,7 @@ import { progressMiddleware } from '@src/features/progress/progressMiddleware'
 import progressReducer from '@src/features/progress/progressSlice'
 import projectsReducer from '@src/features/projects/projectsSlice'
 import uiReducer from '@src/features/ui/uiSlice'
+import { openApi } from '@src/store/openApi'
 import { loadStateFromStorage } from '@src/utils/localStorage'
 
 import { persistenceMiddleware } from './persistenceMiddleware'
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   projects: projectsReducer,
   progress: progressReducer,
   ui: uiReducer,
+  [openApi.reducerPath]: openApi.reducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
@@ -28,7 +30,7 @@ export const store = configureStore({
   middleware: (getDefault) =>
     getDefault({
       serializableCheck: false,
-    }).concat(persistenceMiddleware, progressMiddleware),
+    }).concat(persistenceMiddleware, progressMiddleware, openApi.middleware),
 })
 
 export type AppDispatch = typeof store.dispatch

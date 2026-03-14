@@ -1,5 +1,12 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "tags": ["-lintignore"],
-  "ignore": ["realm-export.json", ".env.sample"]
+  "ignore": [
+    "realm-export.json",
+    ".env.sample",
+    "src/store/openApi.ts",
+    "openapi-config.js",
+    "@typescript-eslint/parser",
+    "@typescript-eslint/eslint-plugin"
+  ]
 }
