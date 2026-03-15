@@ -5,6 +5,10 @@ import { calculateProjectTotalRows } from '@src/features/projects/projectsSlice'
 import type { Project } from '@src/features/projects/types'
 
 const HOUR = 60 * 60 * 1000
+const DAY = HOUR * 24
+
+export const getXDaysFromNow = (x: number): string =>
+  new Date(Date.now() + x * DAY).toLocaleDateString()
 
 /**
  * Calculates the total rows and stitches completed today.

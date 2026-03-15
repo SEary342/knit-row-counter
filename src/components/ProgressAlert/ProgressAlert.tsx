@@ -7,10 +7,11 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@src/app/hooks'
 import { toggleShowStitches } from '@src/features/ui/uiSlice'
+import { getXDaysFromNow } from '@src/hooks/useProjectStats'
 
 interface ProgressAlertProps {
   rowsToday: number
@@ -43,7 +44,8 @@ const ProgressAlert = ({
   const dispatch = useAppDispatch()
   const showStitches = useAppSelector((s) => s.ui.showStitches)
   const [open, setOpen] = useState(true)
-  const showDetails = rowsPerHour > 0 && rowsPerHour < 100
+  const showDetails = rowsPerHour > 0
+  const estimatedEndDate = useMemo(() => getXDaysFromNow(estimatedDays ?? 0), [estimatedDays])
 
   return (
     <Alert
@@ -125,7 +127,7 @@ const ProgressAlert = ({
             </Box>
             {estimatedDays !== null && (
               <Typography variant="body2" component="div">
-                - Est. completion: {pluralText('day', estimatedDays)} (
+                - Est. completion: {estimatedEndDate} ({pluralText('day', estimatedDays)}) - (
                 {pluralText('hr', estimatedHours)} at {averageRowsPerDay} rows/day)
               </Typography>
             )}
