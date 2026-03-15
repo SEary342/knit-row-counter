@@ -695,11 +695,14 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
+        "http://localhost:8000/admin",
+        "http://localhost:8000/auth/callback",
         "http://localhost:3000/auth/callback",
         "http://localhost:3000/*",
         "http://localhost:3000"
       ],
       "webOrigins": [
+        "http://localhost:8000",
         "http://localhost:3000"
       ],
       "notBefore": 0,
