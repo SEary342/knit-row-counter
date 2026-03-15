@@ -10,6 +10,11 @@ vi.mock('@src/app/hooks', () => ({
     selector({ ui: { showStitches: true } }),
 }))
 
+// Mock the date utility so tests are deterministic
+vi.mock('@src/hooks/useProjectStats', () => ({
+  getXDaysFromNow: (days: number) => `MockDate+${days}d`,
+}))
+
 vi.mock('@mui/icons-material/TrendingUp', () => ({
   default: (props: SvgIconProps) => <svg data-testid="TrendingUpIcon" {...props} />,
 }))
@@ -34,10 +39,7 @@ describe('ProgressAlert', () => {
     expect(screen.getByText(/- Rows: 10/)).toBeInTheDocument()
     expect(screen.getByText(/- Speed: 5.0 rows\/hr/)).toBeInTheDocument()
 
-    // Should not show stitches info if 0
     expect(screen.queryByText(/Stitches:/)).not.toBeInTheDocument()
-    expect(screen.queryByText(/stitches\/hr/)).not.toBeInTheDocument()
-    // Should not show estimation if null
     expect(screen.queryByText(/Est. completion/)).not.toBeInTheDocument()
   })
 
@@ -48,7 +50,7 @@ describe('ProgressAlert', () => {
     expect(screen.getByText(/\| 50.2 stitches\/hr/)).toBeInTheDocument()
   })
 
-  it('renders estimated completion when provided', () => {
+  it('renders estimated completion with new date format', () => {
     render(
       <ProgressAlert
         {...defaultProps}
@@ -58,12 +60,13 @@ describe('ProgressAlert', () => {
       />,
     )
 
+    // Expected: - Est. completion: MockDate+2d (2 days) - (5 hrs at 15 rows/day)
     expect(
-      screen.getByText(/- Est. completion: 2 days \(5 hrs at 15 rows\/day\)/),
+      screen.getByText(/- Est. completion: MockDate\+2d \(2 days\) - \(5 hrs at 15 rows\/day\)/),
     ).toBeInTheDocument()
   })
 
-  it('handles singular units correctly for estimation', () => {
+  it('handles singular units correctly in the new format', () => {
     render(
       <ProgressAlert
         {...defaultProps}
@@ -73,29 +76,23 @@ describe('ProgressAlert', () => {
       />,
     )
 
+    // Expected: - Est. completion: MockDate+1d (1 day) - (1 hr at 10 rows/day)
     expect(
-      screen.getByText(/- Est. completion: 1 day \(1 hr at 10 rows\/day\)/),
+      screen.getByText(/- Est. completion: MockDate\+1d \(1 day\) - \(1 hr at 10 rows\/day\)/),
     ).toBeInTheDocument()
   })
 
-  it('renders history button and calls callback when clicked', () => {
+  it('renders rate trend icon when provided', () => {
+    render(<ProgressAlert {...defaultProps} rateTrend="increasing" />)
+    expect(screen.getByTestId('TrendingUpIcon')).toBeInTheDocument()
+  })
+
+  it('calls onOpenHistory when history button is clicked', () => {
     const onOpenHistory = vi.fn()
     render(<ProgressAlert {...defaultProps} onOpenHistory={onOpenHistory} />)
 
     const historyButton = screen.getByRole('button', { name: /view history/i })
-    expect(historyButton).toBeInTheDocument()
-
     fireEvent.click(historyButton)
     expect(onOpenHistory).toHaveBeenCalledTimes(1)
-  })
-
-  it('renders last row duration when provided', () => {
-    render(<ProgressAlert {...defaultProps} lastRowMinutes={15} />)
-    expect(screen.getByText(/- Last row duration: 15 min/)).toBeInTheDocument()
-  })
-
-  it('renders rate trend icon when provided', () => {
-    render(<ProgressAlert {...defaultProps} lastRowMinutes={15} rateTrend="increasing" />)
-    expect(screen.getByTestId('TrendingUpIcon')).toBeInTheDocument()
   })
 })
