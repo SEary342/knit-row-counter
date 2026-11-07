@@ -27,14 +27,7 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: './coverage',
-      exclude: [
-        'src/tests/**',
-        'vite.config.ts',
-        'src/vite-env.d.ts',
-        'coverage/**',
-        'eslint.config.js',
-        'scripts/**',
-      ],
+      exclude: ['src/tests/**', 'vite.config.ts', 'src/vite-env.d.ts', 'coverage/**', 'scripts/**'],
     },
   },
   build: {

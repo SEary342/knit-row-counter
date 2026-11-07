@@ -5,12 +5,15 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom/vitest"
+    ],
     "skipLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],
-      "@comp/*": ["src/components/*"]
+      "@src/*": ["./src/*"],
+      "@comp/*": ["./src/components/*"]
     },
 
     /* Bundler mode */

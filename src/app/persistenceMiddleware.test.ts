@@ -31,7 +31,7 @@ describe('persistenceMiddleware', () => {
       getState: vi.fn(() => mockState),
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const dispatch = (persistenceMiddleware as Middleware)(mockStore as any)(mockNext)
     const testAction = { type: 'TEST_ACTION' }
 
@@ -51,7 +51,7 @@ describe('persistenceMiddleware', () => {
       getState: vi.fn(() => mockState),
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const dispatch = (persistenceMiddleware as Middleware)(mockStore as any)(mockNext)
     const result = dispatch({ type: 'TEST_ACTION' })
 
@@ -80,7 +80,7 @@ describe('persistenceMiddleware', () => {
       getState: vi.fn(() => mockState),
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const dispatch = (persistenceMiddleware as Middleware)(mockStore as any)(mockNext)
     dispatch({ type: 'TEST_ACTION' })
 
@@ -100,7 +100,7 @@ describe('persistenceMiddleware', () => {
       getState: vi.fn(() => mockState),
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const dispatch = (persistenceMiddleware as Middleware)(mockStore as any)(mockNext)
     dispatch({ type: 'TEST_ACTION' })
 
@@ -129,7 +129,7 @@ describe('persistenceMiddleware', () => {
       getState: vi.fn(() => mockState),
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const dispatch = (persistenceMiddleware as Middleware)(mockStore as any)(mockNext)
     const action = { type: 'TEST' }
     const result = dispatch(action) as Record<string, unknown>

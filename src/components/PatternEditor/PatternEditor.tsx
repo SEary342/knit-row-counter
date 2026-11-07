@@ -176,7 +176,6 @@ const PatternEditor = ({ value, onChange }: PatternEditorProps) => {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const processRowUpdate = (newRow: GridRowModel, _oldRow: GridRowModel): Promise<PatternRow> => {
     const updatedRow = { ...(newRow as PatternRow), isNew: false }
     const newRows = rows.map((row) => (row.id === updatedRow.id ? updatedRow : row))
