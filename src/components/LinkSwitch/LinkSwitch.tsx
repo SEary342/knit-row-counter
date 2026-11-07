@@ -1,6 +1,6 @@
 import LinkIcon from '@mui/icons-material/Link'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
-import { IconButton } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 
 interface LinkSwitchProps {
   onClick?: () => void

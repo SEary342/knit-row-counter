@@ -1,13 +1,10 @@
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
-import {
-  Box,
-  CircularProgress,
-  type CircularProgressProps,
-  IconButton,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import CircularProgress, { type CircularProgressProps } from '@mui/material/CircularProgress'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 interface Props {
   label?: string

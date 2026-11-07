@@ -1,17 +1,13 @@
-import { useMediaQuery } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import FullscreenDataGrid from './FullscreenDataGrid'
 
 // Mock MUI's useMediaQuery
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual<typeof import('@mui/material')>('@mui/material')
-  return {
-    ...actual,
-    useMediaQuery: vi.fn(),
-  }
-})
+vi.mock('@mui/material/useMediaQuery', () => ({
+  default: vi.fn(),
+}))
 
 // Mock child component (DataGrid)
 const MockDataGrid = (props: {

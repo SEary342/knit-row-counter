@@ -1,15 +1,13 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import {
-  Box,
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

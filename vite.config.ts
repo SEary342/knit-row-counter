@@ -9,8 +9,8 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/',
   resolve: {
     alias: {
-      '@src': resolve(__dirname, './src'),
-      '@comp': resolve(__dirname, './src/components'),
+      '@src': resolve(import.meta.dirname, './src'),
+      '@comp': resolve(import.meta.dirname, './src/components'),
     },
   },
   plugins: [react(), viteSingleFile()],

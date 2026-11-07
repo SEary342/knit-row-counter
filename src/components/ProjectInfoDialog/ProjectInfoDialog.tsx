@@ -1,18 +1,16 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  Switch,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
+import Switch from '@mui/material/Switch'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import {
   DataGrid,
   GridActionsCellItem,

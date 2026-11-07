@@ -3,17 +3,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import DonutLarge from '@mui/icons-material/DonutLarge'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useSnackbar } from 'notistack'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'

@@ -1,6 +1,11 @@
 import FullscreenIcon from '@mui/icons-material/Fullscreen'
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
-import { Box, Dialog, IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Dialog from '@mui/material/Dialog'
+import IconButton from '@mui/material/IconButton'
+import { useTheme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import type { DataGridProps } from '@mui/x-data-grid'
 import { Fragment, type ReactElement, cloneElement, useState } from 'react'
 

@@ -1,6 +1,8 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 import { useMemo, useState } from 'react'
 
 import { useAppDispatch } from '@src/app/hooks'

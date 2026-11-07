@@ -1,19 +1,17 @@
 import LockIcon from '@mui/icons-material/Lock'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  TextField,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useEffect, useState } from 'react'
 
 import { useAppDispatch } from '@src/app/hooks'
