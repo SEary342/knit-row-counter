@@ -80,6 +80,7 @@ describe('Heatmap Component', () => {
     render(<Heatmap data={mockData} title="Activity" verb="contributions" maxDays={14} />)
 
     const cell = screen.getByTestId('heatmap-cell-2023-12-31')
+    vi.spyOn(cell, 'getBoundingClientRect').mockReturnValue(new DOMRect(10, 10, 12, 12))
     fireEvent.mouseOver(cell)
 
     act(() => {

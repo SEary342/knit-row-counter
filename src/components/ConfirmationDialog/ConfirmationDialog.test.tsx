@@ -1,3 +1,4 @@
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,26 +17,43 @@ describe('ConfirmationDialog', () => {
     message: 'Test message for confirmation.',
   }
 
+  const testTheme = createTheme({
+    components: {
+      MuiButtonBase: {
+        defaultProps: {
+          disableRipple: true,
+        },
+      },
+    },
+  })
+
+  const renderDialog = (props: Parameters<typeof ConfirmationDialog>[0] = defaultProps) =>
+    render(
+      <ThemeProvider theme={testTheme}>
+        <ConfirmationDialog {...props} />
+      </ThemeProvider>,
+    )
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('renders the dialog with title and message when open', () => {
-    render(<ConfirmationDialog {...defaultProps} />)
+    renderDialog()
 
     expect(screen.getByText('Test Title')).toBeInTheDocument()
     expect(screen.getByText('Test message for confirmation.')).toBeInTheDocument()
   })
 
   it('does not render the dialog when not open', () => {
-    render(<ConfirmationDialog {...defaultProps} open={false} />)
+    renderDialog({ ...defaultProps, open: false })
 
     expect(screen.queryByText('Test Title')).not.toBeInTheDocument()
   })
 
   it('calls onConfirm when the confirm button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfirmationDialog {...defaultProps} />)
+    renderDialog()
 
     const confirmButton = screen.getByRole('button', { name: 'Confirm' })
     await user.click(confirmButton)
@@ -46,7 +64,7 @@ describe('ConfirmationDialog', () => {
 
   it('calls onClose when the cancel button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfirmationDialog {...defaultProps} />)
+    renderDialog()
 
     const cancelButton = screen.getByRole('button', { name: 'Cancel' })
     await user.click(cancelButton)
@@ -56,7 +74,7 @@ describe('ConfirmationDialog', () => {
   })
 
   it('displays custom confirm text and color', () => {
-    render(<ConfirmationDialog {...defaultProps} confirmText="Delete" confirmColor="error" />)
+    renderDialog({ ...defaultProps, confirmText: 'Delete', confirmColor: 'error' })
 
     const confirmButton = screen.getByRole('button', { name: 'Delete' })
     expect(confirmButton).toBeInTheDocument()
@@ -64,7 +82,7 @@ describe('ConfirmationDialog', () => {
   })
 
   it('gives the confirm button autoFocus', () => {
-    render(<ConfirmationDialog {...defaultProps} />)
+    renderDialog()
     const confirmButton = screen.getByRole('button', { name: 'Confirm' })
     expect(confirmButton).toHaveFocus()
   })

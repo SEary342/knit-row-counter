@@ -165,6 +165,8 @@ describe('Layout', () => {
   })
 
   it('handles project import error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
     render(
       <MemoryRouter>
         <Layout>Content</Layout>
@@ -193,6 +195,10 @@ describe('Layout', () => {
 
     expect(readAsTextMock).toHaveBeenCalledWith(file)
     expect(mockDispatch).not.toHaveBeenCalled()
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Failed to parse import file:',
+      expect.any(SyntaxError),
+    )
     expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
       expect.stringContaining('Error: Could not import file'),
       { variant: 'error' },
