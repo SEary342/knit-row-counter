@@ -1,19 +1,17 @@
 import LockIcon from '@mui/icons-material/Lock'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  TextField,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useEffect, useState } from 'react'
 
 import { useAppDispatch } from '@src/app/hooks'
@@ -126,8 +124,20 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
   }
 
   return (
-    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
-      <Stack direction="row" alignItems="center">
+    <Box
+      sx={{
+        justifyContent: 'space-between',
+        flex: 1,
+        display: 'flex',
+        paddingX: 2,
+      }}
+    >
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         {section && (
           <>
             <Tooltip title="Link/Unlink From Global Counter">
@@ -217,7 +227,14 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
           </DialogContent>
 
           <DialogActions>
-            <Box display="flex" flex={1} justifyContent="space-between" sx={{ px: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                justifyContent: 'space-between',
+                px: 2,
+              }}
+            >
               {section && (
                 <Button onClick={() => setConfirmOpen(true)} color="error">
                   Delete

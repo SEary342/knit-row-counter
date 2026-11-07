@@ -3,17 +3,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import DonutLarge from '@mui/icons-material/DonutLarge'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useSnackbar } from 'notistack'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -111,8 +109,22 @@ const ProjectView = () => {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={2}>
-        <Stack direction="row" alignItems="center" spacing={1}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <IconButton onClick={() => navigate(-1)} aria-label="back">
             <ArrowBackIcon />
           </IconButton>
@@ -145,7 +157,14 @@ const ProjectView = () => {
 
       <Paper sx={{ p: 2, mt: 3 }}>
         <Stack spacing={2}>
-          <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <Button
               variant="outlined"
               onClick={() => {

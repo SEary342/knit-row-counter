@@ -1,13 +1,11 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  TextField,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -48,7 +46,14 @@ const GlobalDialog = ({
   }
 
   return (
-    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
+    <Box
+      sx={{
+        justifyContent: 'space-between',
+        flex: 1,
+        display: 'flex',
+        paddingX: 2,
+      }}
+    >
       <div />
       {trigger}
       <Dialog open={open} maxWidth="xs" fullWidth>
@@ -73,7 +78,13 @@ const GlobalDialog = ({
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Box display="flex" flex={1} justifyContent="space-between">
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                justifyContent: 'space-between',
+              }}
+            >
               <Button onClick={() => setConfirmOpen(true)} color="error">
                 Reset Project
               </Button>

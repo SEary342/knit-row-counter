@@ -1,17 +1,13 @@
-import { useMediaQuery } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import Heatmap, { calculateMaxDaysForWidth, formatLocalDate } from './Heatmap'
 
 // Mock useMediaQuery to control mobile/desktop view in tests
-vi.mock('@mui/material', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@mui/material')>()
-  return {
-    ...actual,
-    useMediaQuery: vi.fn(),
-  }
-})
+vi.mock('@mui/material/useMediaQuery', () => ({
+  default: vi.fn(),
+}))
 
 describe('Heatmap Utils', () => {
   it('formatLocalDate formats date correctly as YYYY-MM-DD', () => {
@@ -80,6 +76,7 @@ describe('Heatmap Component', () => {
     render(<Heatmap data={mockData} title="Activity" verb="contributions" maxDays={14} />)
 
     const cell = screen.getByTestId('heatmap-cell-2023-12-31')
+    vi.spyOn(cell, 'getBoundingClientRect').mockReturnValue(new DOMRect(10, 10, 12, 12))
     fireEvent.mouseOver(cell)
 
     act(() => {

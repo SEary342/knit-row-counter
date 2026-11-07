@@ -1,7 +1,11 @@
-import { Box, Tooltip, Typography, alpha, useMediaQuery, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { alpha, useTheme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { type ReactNode, useMemo } from 'react'
 
-export interface HeatmapData {
+interface HeatmapData {
   date: string // YYYY-MM-DD
   count: number
 }

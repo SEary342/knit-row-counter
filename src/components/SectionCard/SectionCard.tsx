@@ -2,7 +2,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@src/app/hooks'
@@ -82,7 +85,14 @@ const SectionCard = ({
     <CounterCard
       title={
         isFinished ? (
-          <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+          <Box
+            component="span"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
             {section?.name}
             <CheckCircleIcon color="success" fontSize="small" />
           </Box>
@@ -91,7 +101,14 @@ const SectionCard = ({
         )
       }
       cardActions={
-        <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
           <Box>
             {!isSortForced && sectionIndex !== undefined && totalSections !== undefined && (
               <>

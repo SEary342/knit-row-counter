@@ -1,6 +1,8 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 import { useMemo, useState } from 'react'
 
 import { useAppDispatch } from '@src/app/hooks'
@@ -42,12 +44,24 @@ const GlobalCard = ({ project, displaySize = 'large' }: globalCardProps) => {
   const payload = linkedSectionIds.length > 0 ? linkedSectionIds : undefined
 
   return (
-    <Box position="relative" height="100%">
+    <Box
+      sx={{
+        position: 'relative',
+        height: '100%',
+      }}
+    >
       {isFinished && <Fireworks />}
       <CounterCard
         title={
           isFinished ? (
-            <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
               Global
               <CheckCircleIcon color="success" fontSize="small" />
             </Box>

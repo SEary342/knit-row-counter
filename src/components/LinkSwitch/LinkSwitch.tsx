@@ -1,6 +1,6 @@
 import LinkIcon from '@mui/icons-material/Link'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
-import { IconButton } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 
 interface LinkSwitchProps {
   onClick?: () => void
@@ -11,7 +11,16 @@ interface LinkSwitchProps {
 const LinkSwitch = ({ onClick, checked, disabled }: LinkSwitchProps) => {
   return (
     <IconButton onClick={onClick} disabled={disabled}>
-      {checked ? <LinkIcon fontSize="small" color="success" /> : <LinkOffIcon fontSize="small" />}
+      {checked ? (
+        <LinkIcon
+          color="success"
+          sx={{
+            fontSize: 'small',
+          }}
+        />
+      ) : (
+        <LinkOffIcon fontSize="small" />
+      )}
     </IconButton>
   )
 }

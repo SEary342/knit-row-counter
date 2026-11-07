@@ -1,4 +1,5 @@
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 

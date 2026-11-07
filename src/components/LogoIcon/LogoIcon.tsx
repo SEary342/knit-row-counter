@@ -1,4 +1,4 @@
-import { SvgIcon, type SvgIconProps } from '@mui/material'
+import SvgIcon, { type SvgIconProps } from '@mui/material/SvgIcon'
 
 import { LOGO_COLORS } from '@comp/util'
 
