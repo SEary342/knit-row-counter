@@ -109,8 +109,22 @@ const ProjectView = () => {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} mb={2}>
-        <Stack direction="row" alignItems="center" spacing={1}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <IconButton onClick={() => navigate(-1)} aria-label="back">
             <ArrowBackIcon />
           </IconButton>
@@ -143,7 +157,14 @@ const ProjectView = () => {
 
       <Paper sx={{ p: 2, mt: 3 }}>
         <Stack spacing={2}>
-          <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <Button
               variant="outlined"
               onClick={() => {

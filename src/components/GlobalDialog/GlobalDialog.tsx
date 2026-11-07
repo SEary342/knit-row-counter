@@ -46,7 +46,14 @@ const GlobalDialog = ({
   }
 
   return (
-    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
+    <Box
+      sx={{
+        justifyContent: 'space-between',
+        flex: 1,
+        display: 'flex',
+        paddingX: 2,
+      }}
+    >
       <div />
       {trigger}
       <Dialog open={open} maxWidth="xs" fullWidth>
@@ -71,7 +78,13 @@ const GlobalDialog = ({
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Box display="flex" flex={1} justifyContent="space-between">
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                justifyContent: 'space-between',
+              }}
+            >
               <Button onClick={() => setConfirmOpen(true)} color="error">
                 Reset Project
               </Button>

@@ -178,7 +178,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           </Box>
           <Divider />
           <Box sx={{ p: 2 }}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               Version: {import.meta.env.APP_VERSION}
             </Typography>
           </Box>

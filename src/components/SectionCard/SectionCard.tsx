@@ -85,7 +85,14 @@ const SectionCard = ({
     <CounterCard
       title={
         isFinished ? (
-          <Box component="span" display="inline-flex" alignItems="center" gap={1}>
+          <Box
+            component="span"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
             {section?.name}
             <CheckCircleIcon color="success" fontSize="small" />
           </Box>
@@ -94,7 +101,14 @@ const SectionCard = ({
         )
       }
       cardActions={
-        <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
           <Box>
             {!isSortForced && sectionIndex !== undefined && totalSections !== undefined && (
               <>

@@ -71,7 +71,14 @@ export default function ProjectPickerView() {
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
         <Typography variant="h5">Projects</Typography>
         <Button variant="contained" onClick={() => setOpenNew(true)}>
           New Project
@@ -80,7 +87,13 @@ export default function ProjectPickerView() {
 
       <List>
         {projects.length === 0 && (
-          <Typography color="text.secondary">No projects yet — create one!</Typography>
+          <Typography
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
+            No projects yet — create one!
+          </Typography>
         )}
         {projects.map((p) => (
           <ListItem

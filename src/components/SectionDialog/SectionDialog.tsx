@@ -124,8 +124,20 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
   }
 
   return (
-    <Box justifyContent="space-between" flex={1} display="flex" paddingX={2}>
-      <Stack direction="row" alignItems="center">
+    <Box
+      sx={{
+        justifyContent: 'space-between',
+        flex: 1,
+        display: 'flex',
+        paddingX: 2,
+      }}
+    >
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         {section && (
           <>
             <Tooltip title="Link/Unlink From Global Counter">
@@ -215,7 +227,14 @@ const SectionDialog = ({ section, open, onClose, trigger }: SectionDialogProps) 
           </DialogContent>
 
           <DialogActions>
-            <Box display="flex" flex={1} justifyContent="space-between" sx={{ px: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                justifyContent: 'space-between',
+                px: 2,
+              }}
+            >
               {section && (
                 <Button onClick={() => setConfirmOpen(true)} color="error">
                   Delete

@@ -179,8 +179,10 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
               <Stack
                 direction="row"
                 spacing={{ xs: 0.5, sm: 1 }}
-                alignItems="center"
-                flexWrap="nowrap"
+                sx={{
+                  alignItems: 'center',
+                  flexWrap: 'nowrap',
+                }}
               >
                 <Switch
                   size="small"
@@ -192,23 +194,34 @@ const ProjectInfoDialog = ({ project, open, onClose }: ProjectInfoDialogProps) =
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   spacing={{ xs: 0, sm: 0.5 }}
-                  alignItems={{ xs: 'flex-start', sm: 'center' }}
-                  lineHeight={1}
+                  sx={{
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    lineHeight: 1,
+                  }}
                 >
                   <Typography
-                    fontWeight={countMode === 'rows' ? 600 : 400}
-                    fontSize={{ xs: '0.8rem', sm: '1rem' }}
+                    sx={{
+                      fontWeight: countMode === 'rows' ? 600 : 400,
+                      fontSize: { xs: '0.8rem', sm: '1rem' },
+                    }}
                   >
                     Rows
                   </Typography>
 
-                  <Typography sx={{ display: { xs: 'none', sm: 'block' } }} fontSize="inherit">
+                  <Typography
+                    sx={{
+                      fontSize: 'inherit',
+                      display: { xs: 'none', sm: 'block' },
+                    }}
+                  >
                     /
                   </Typography>
 
                   <Typography
-                    fontWeight={countMode === 'stitches' ? 600 : 400}
-                    fontSize={{ xs: '0.8rem', sm: '1rem' }}
+                    sx={{
+                      fontWeight: countMode === 'stitches' ? 600 : 400,
+                      fontSize: { xs: '0.8rem', sm: '1rem' },
+                    }}
                   >
                     Stitches
                   </Typography>
