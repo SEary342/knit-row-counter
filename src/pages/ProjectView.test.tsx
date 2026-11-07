@@ -239,10 +239,15 @@ describe('ProjectView', () => {
   })
 
   it('handles export', () => {
+    const anchorClickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {})
     render(<ProjectView />)
     const exportBtn = screen.getByLabelText('Export Project')
     fireEvent.click(exportBtn)
     expect(globalThis.URL.createObjectURL).toHaveBeenCalled()
+    expect(anchorClickSpy).toHaveBeenCalled()
+    anchorClickSpy.mockRestore()
   })
 
   it('handles import success', async () => {

@@ -7,7 +7,7 @@ interface UIState {
 
 const initialState: UIState = { darkMode: true, showStitches: true }
 
-export const uiSlice = createSlice({
+const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {

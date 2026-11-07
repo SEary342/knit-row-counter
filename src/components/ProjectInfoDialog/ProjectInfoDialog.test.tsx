@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -74,13 +74,9 @@ vi.mock('@src/app/hooks', () => ({
 }))
 
 // Mock MUI
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual<typeof import('@mui/material')>('@mui/material')
-  return {
-    ...actual,
-    useMediaQuery: vi.fn(),
-  }
-})
+vi.mock('@mui/material/useMediaQuery', () => ({
+  default: vi.fn(),
+}))
 
 // Mock actions
 vi.mock('@src/features/progress/progressSlice', () => ({

@@ -9,8 +9,8 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'development' ? '/' : '/knit-row-counter/',
   resolve: {
     alias: {
-      '@src': resolve(__dirname, './src'),
-      '@comp': resolve(__dirname, './src/components'),
+      '@src': resolve(import.meta.dirname, './src'),
+      '@comp': resolve(import.meta.dirname, './src/components'),
     },
   },
   plugins: [react(), viteSingleFile()],
@@ -27,14 +27,7 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: './coverage',
-      exclude: [
-        'src/tests/**',
-        'vite.config.ts',
-        'src/vite-env.d.ts',
-        'coverage/**',
-        'eslint.config.js',
-        'scripts/**',
-      ],
+      exclude: ['src/tests/**', 'vite.config.ts', 'src/vite-env.d.ts', 'coverage/**', 'scripts/**'],
     },
   },
   build: {

@@ -1,13 +1,10 @@
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
-import {
-  Box,
-  CircularProgress,
-  type CircularProgressProps,
-  IconButton,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import CircularProgress, { type CircularProgressProps } from '@mui/material/CircularProgress'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 interface Props {
   label?: string
@@ -41,7 +38,14 @@ export default function CounterCircle({
   const isSmall = size < 180
 
   return (
-    <Stack sx={{ width: size, height: size, position: 'relative' }} gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+        width: size,
+        height: size,
+        position: 'relative',
+      }}
+    >
       {label && (
         <Typography variant="h6" align="center">
           {label}
@@ -65,7 +69,13 @@ export default function CounterCircle({
           pointerEvents: 'none',
         }}
       >
-        <Stack spacing={0.5} alignItems="center" sx={{ pointerEvents: 'auto' }}>
+        <Stack
+          spacing={0.5}
+          sx={{
+            alignItems: 'center',
+            pointerEvents: 'auto',
+          }}
+        >
           <Typography variant={isSmall ? 'caption' : isMedium ? 'h6' : 'h3'} align="center">
             {value}
             {showFraction && max ? ` / ${max}` : ''}
@@ -76,11 +86,22 @@ export default function CounterCircle({
             </Typography>
           )}
           {smallNote && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {smallNote}
             </Typography>
           )}
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              alignItems: 'center',
+            }}
+          >
             <IconButton
               onClick={onDecrement}
               aria-label="decrement"
